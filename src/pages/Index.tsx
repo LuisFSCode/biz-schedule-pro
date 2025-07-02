@@ -1,4 +1,4 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -17,9 +17,11 @@ const Index = () => {
             <a href="#precos" className="text-sm font-medium hover:text-primary transition-colors">Preços</a>
             <a href="#contato" className="text-sm font-medium hover:text-primary transition-colors">Contato</a>
           </div>
-          <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
-            Criar Minha Página
-          </button>
+          <Link to="/cadastro">
+            <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+              Criar Minha Página
+            </button>
+          </Link>
         </div>
       </header>
 
@@ -34,12 +36,16 @@ const Index = () => {
             Seus clientes agendam online e você gerencia tudo em um só lugar.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
-              Começar Gratuitamente
-            </button>
-            <button className="border border-input bg-background px-8 py-3 rounded-lg text-lg font-semibold hover:bg-accent hover:text-accent-foreground transition-colors">
-              Ver Demonstração
-            </button>
+            <Link to="/cadastro">
+              <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
+                Começar Gratuitamente
+              </button>
+            </Link>
+            <Link to="/demo">
+              <button className="border border-input bg-background px-8 py-3 rounded-lg text-lg font-semibold hover:bg-accent hover:text-accent-foreground transition-colors">
+                Ver Demonstração
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -129,9 +135,11 @@ const Index = () => {
           <p className="text-xl mb-8 text-primary-foreground/90">
             Crie sua página de agendamentos agora mesmo e comece a receber mais clientes
           </p>
-          <button className="bg-background text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-background/90 transition-colors">
-            Criar Minha Página Gratuitamente
-          </button>
+          <Link to="/cadastro">
+            <button className="bg-background text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-background/90 transition-colors">
+              Criar Minha Página Gratuitamente
+            </button>
+          </Link>
         </div>
       </section>
 
