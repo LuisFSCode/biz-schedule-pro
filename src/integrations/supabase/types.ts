@@ -9,7 +9,179 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_time: string
+          created_at: string
+          customer_id: string
+          establishment_id: string
+          id: string
+          notes: string | null
+          service_duration: number | null
+          service_name: string
+          service_price: number | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_time: string
+          created_at?: string
+          customer_id: string
+          establishment_id: string
+          id?: string
+          notes?: string | null
+          service_duration?: number | null
+          service_name: string
+          service_price?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_time?: string
+          created_at?: string
+          customer_id?: string
+          establishment_id?: string
+          id?: string
+          notes?: string | null
+          service_duration?: number | null
+          service_name?: string
+          service_price?: number | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_establishment_id_fkey"
+            columns: ["establishment_id"]
+            isOneToOne: false
+            referencedRelation: "establishments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          email: string
+          establishment_id: string
+          id: string
+          name: string | null
+          password_hash: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          establishment_id: string
+          id?: string
+          name?: string | null
+          password_hash?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          establishment_id?: string
+          id?: string
+          name?: string | null
+          password_hash?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_establishment_id_fkey"
+            columns: ["establishment_id"]
+            isOneToOne: false
+            referencedRelation: "establishments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      establishments: {
+        Row: {
+          address: string | null
+          color_primary: string | null
+          created_at: string
+          email: string
+          facebook_url: string | null
+          favicon_url: string | null
+          feedbacks: Json | null
+          footer_text: string | null
+          hero_description: string | null
+          hero_image_url: string | null
+          hero_title: string | null
+          id: string
+          instagram_url: string | null
+          logo_url: string | null
+          name: string
+          password_hash: string | null
+          phone: string | null
+          services: Json | null
+          slug: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          color_primary?: string | null
+          created_at?: string
+          email: string
+          facebook_url?: string | null
+          favicon_url?: string | null
+          feedbacks?: Json | null
+          footer_text?: string | null
+          hero_description?: string | null
+          hero_image_url?: string | null
+          hero_title?: string | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          name: string
+          password_hash?: string | null
+          phone?: string | null
+          services?: Json | null
+          slug: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          color_primary?: string | null
+          created_at?: string
+          email?: string
+          facebook_url?: string | null
+          favicon_url?: string | null
+          feedbacks?: Json | null
+          footer_text?: string | null
+          hero_description?: string | null
+          hero_image_url?: string | null
+          hero_title?: string | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          name?: string
+          password_hash?: string | null
+          phone?: string | null
+          services?: Json | null
+          slug?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
