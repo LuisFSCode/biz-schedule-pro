@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Cadastro = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
@@ -16,6 +20,7 @@ const Cadastro = () => {
   });
   const [slugChecked, setSlugChecked] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,16 +32,95 @@ const Cadastro = () => {
     }
   };
 
-  const checkSlugAvailability = () => {
-    // Simular verificação de disponibilidade
-    setSlugChecked(true);
-    setSlugAvailable(Math.random() > 0.3); // 70% chance de estar disponível
+  const checkSlugAvailability = async () => {
+    if (!formData.slug) return;
+    
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('establishments')
+        .select('slug')
+        .eq('slug', formData.slug)
+        .maybeSingle();
+      
+      if (error) throw error;
+      
+      setSlugChecked(true);
+      setSlugAvailable(!data);
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao verificar disponibilidade da URL",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implementar cadastro com Supabase
-    console.log("Cadastro:", formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Erro",
+        description: "As senhas não coincidem",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!slugAvailable) {
+      toast({
+        title: "Erro",
+        description: "Verifique a disponibilidade da URL primeiro",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      // Criar usuário no auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (authError) throw authError;
+      
+      if (authData.user) {
+        // Criar estabelecimento
+        const { error: establishmentError } = await supabase
+          .from('establishments')
+          .insert({
+            id: authData.user.id,
+            name: formData.name,
+            slug: formData.slug,
+            email: formData.email
+          });
+        
+        if (establishmentError) throw establishmentError;
+        
+        toast({
+          title: "Sucesso!",
+          description: "Sua página foi criada com sucesso!"
+        });
+        
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao criar conta",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,9 +185,9 @@ const Cadastro = () => {
                     type="button"
                     variant="outline"
                     onClick={checkSlugAvailability}
-                    disabled={!formData.slug}
+                    disabled={!formData.slug || isLoading}
                   >
-                    Verificar
+                    {isLoading ? "Verificando..." : "Verificar"}
                   </Button>
                 </div>
                 {slugChecked && (
@@ -154,9 +238,9 @@ const Cadastro = () => {
               <Button 
                 type="submit" 
                 className="w-full"
-                disabled={!slugAvailable}
+                disabled={!slugAvailable || isLoading}
               >
-                Criar Minha Página
+                {isLoading ? "Criando..." : "Criar Minha Página"}
               </Button>
             </form>
 
