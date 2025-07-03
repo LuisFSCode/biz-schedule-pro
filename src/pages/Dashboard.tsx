@@ -185,7 +185,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold">Dashboard - {establishment?.name}</h1>
-              <p className="text-sm text-muted-foreground">agendapro.com/{establishment?.slug}</p>
+              <p className="text-sm text-muted-foreground">schedulepro.com/{establishment?.slug}</p>
             </div>
           </div>
           <Button variant="outline" onClick={handleLogout}>
@@ -473,7 +473,7 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
     hero_description: establishment?.hero_description || 'Agende seus serviços de forma rápida e fácil',
     hero_image_url: establishment?.hero_image_url || '',
     color_primary: establishment?.color_primary || '#3B82F6',
-    footer_text: establishment?.footer_text || 'Desenvolvido com AgendaPro',
+    footer_text: establishment?.footer_text || 'Desenvolvido com SchedulePro',
   });
 
   const handleSubmit = (e: React.FormEvent) => {

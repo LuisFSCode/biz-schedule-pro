@@ -8,6 +8,7 @@ import Cadastro from "./pages/Cadastro";
 import Login from "./pages/Login";
 import Demo from "./pages/Demo";
 import Dashboard from "./pages/Dashboard";
+import PublicLanding from "./pages/PublicLanding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/demo" element={<Demo />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/:slug" element={<PublicLanding />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
