@@ -110,7 +110,7 @@ const Cadastro = () => {
           description: "Sua página foi criada com sucesso!"
         });
         
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (error: any) {
       toast({
