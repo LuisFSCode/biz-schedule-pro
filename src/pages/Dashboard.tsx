@@ -458,15 +458,22 @@ const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
 
 const SettingsForm = ({ establishment, onUpdate }: any) => {
   const [formData, setFormData] = useState({
+    // Dados do estabelecimento
     name: establishment?.name || '',
     phone: establishment?.phone || '',
     address: establishment?.address || '',
     whatsapp: establishment?.whatsapp || '',
     instagram_url: establishment?.instagram_url || '',
     facebook_url: establishment?.facebook_url || '',
-    hero_title: establishment?.hero_title || '',
-    hero_description: establishment?.hero_description || '',
-    footer_text: establishment?.footer_text || '',
+    
+    // Personalização da Landing Page
+    favicon_url: establishment?.favicon_url || '',
+    logo_url: establishment?.logo_url || '',
+    hero_title: establishment?.hero_title || 'Bem-vindos ao nosso estabelecimento',
+    hero_description: establishment?.hero_description || 'Agende seus serviços de forma rápida e fácil',
+    hero_image_url: establishment?.hero_image_url || '',
+    color_primary: establishment?.color_primary || '#3B82F6',
+    footer_text: establishment?.footer_text || 'Desenvolvido com AgendaPro',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -483,83 +490,140 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">Nome do Estabelecimento</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Telefone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="whatsapp">WhatsApp</Label>
-              <Input
-                id="whatsapp"
-                value={formData.whatsapp}
-                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="address">Endereço</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="instagram_url">Instagram</Label>
-              <Input
-                id="instagram_url"
-                value={formData.instagram_url}
-                onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="facebook_url">Facebook</Label>
-              <Input
-                id="facebook_url"
-                value={formData.facebook_url}
-                onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Informações do Estabelecimento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Nome do Estabelecimento</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  value={formData.whatsapp}
+                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="address">Endereço</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="instagram_url">Instagram</Label>
+                <Input
+                  id="instagram_url"
+                  placeholder="https://instagram.com/seuusuario"
+                  value={formData.instagram_url}
+                  onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="facebook_url">Facebook</Label>
+                <Input
+                  id="facebook_url"
+                  placeholder="https://facebook.com/suapagina"
+                  value={formData.facebook_url}
+                  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
+                />
+              </div>
             </div>
           </div>
-          
-          <div>
-            <Label htmlFor="hero_title">Título da Página</Label>
-            <Input
-              id="hero_title"
-              value={formData.hero_title}
-              onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="hero_description">Descrição da Página</Label>
-            <Textarea
-              id="hero_description"
-              value={formData.hero_description}
-              onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="footer_text">Texto do Rodapé</Label>
-            <Input
-              id="footer_text"
-              value={formData.footer_text}
-              onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
-            />
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Personalização da Landing Page</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="favicon_url">Favicon (URL)</Label>
+                <Input
+                  id="favicon_url"
+                  placeholder="https://exemplo.com/favicon.png"
+                  value={formData.favicon_url}
+                  onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Ícone que aparece na aba do navegador</p>
+              </div>
+              <div>
+                <Label htmlFor="logo_url">Logo (URL)</Label>
+                <Input
+                  id="logo_url"
+                  placeholder="https://exemplo.com/logo.png"
+                  value={formData.logo_url}
+                  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Logo que aparece no header</p>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="color_primary">Cor Principal</Label>
+              <Input
+                id="color_primary"
+                type="color"
+                value={formData.color_primary}
+                onChange={(e) => setFormData({ ...formData, color_primary: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Cor principal do tema da landing page</p>
+            </div>
+            
+            <div>
+              <Label htmlFor="hero_image_url">Imagem do Hero (URL)</Label>
+              <Input
+                id="hero_image_url"
+                placeholder="https://exemplo.com/hero-image.jpg"
+                value={formData.hero_image_url}
+                onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Imagem de fundo da seção principal</p>
+            </div>
+            
+            <div>
+              <Label htmlFor="hero_title">Título Principal</Label>
+              <Input
+                id="hero_title"
+                value={formData.hero_title}
+                onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Título que aparece na seção hero</p>
+            </div>
+            
+            <div>
+              <Label htmlFor="hero_description">Descrição Principal</Label>
+              <Textarea
+                id="hero_description"
+                value={formData.hero_description}
+                onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Descrição que aparece abaixo do título</p>
+            </div>
+            
+            <div>
+              <Label htmlFor="footer_text">Texto do Rodapé</Label>
+              <Input
+                id="footer_text"
+                value={formData.footer_text}
+                onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Texto que aparece no rodapé da página</p>
+            </div>
           </div>
           
           <Button type="submit" className="w-full">
