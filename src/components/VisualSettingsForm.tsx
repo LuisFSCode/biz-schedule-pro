@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ElementorEditor } from "@/components/ElementorEditor";
+import { CodeEditor } from "@/components/CodeEditor";
 
 interface VisualSettingsFormProps {
   establishment: any;
@@ -362,18 +364,47 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
               </div>
 
               {formData.section2_enabled && (
-                <div>
-                  <Label htmlFor="section2_content">Conteúdo HTML Personalizado</Label>
-                  <Textarea
-                    id="section2_content"
-                    rows={10}
-                    value={formData.section2_content}
-                    onChange={(e) => setFormData({ ...formData, section2_content: e.target.value })}
-                    placeholder="Insira o HTML personalizado aqui..."
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Use classes do Tailwind CSS para estilização. Exemplo: text-center, py-8, etc.
-                  </p>
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-blue-800 mb-2">✨ Editor Avançado</h4>
+                    <p className="text-sm text-blue-700">
+                      Escolha entre o editor visual (drag-and-drop como Elementor) ou editor de código (estilo VSCode)
+                    </p>
+                  </div>
+
+                  <Tabs defaultValue="visual" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="visual">🎨 Editor Visual (Elementor)</TabsTrigger>
+                      <TabsTrigger value="code">💻 Editor de Código (VSCode)</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="visual" className="space-y-4">
+                      <div className="border rounded-lg p-4 bg-gray-50">
+                        <h4 className="text-sm font-semibold mb-3">Editor Visual - Arraste e Solte</h4>
+                        <ElementorEditor
+                          initialContent={formData.section2_content}
+                          onChange={(htmlContent) => 
+                            setFormData({ ...formData, section2_content: htmlContent })
+                          }
+                        />
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="code" className="space-y-4">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-semibold">Editor de Código - Modo Profissional</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Editor com syntax highlighting, autocompletar e todas as funcionalidades do VSCode.
+                          Use classes do Tailwind CSS para estilização.
+                        </p>
+                        <CodeEditor
+                          value={formData.section2_content}
+                          onChange={(value) => setFormData({ ...formData, section2_content: value })}
+                          language="html"
+                        />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               )}
             </TabsContent>
