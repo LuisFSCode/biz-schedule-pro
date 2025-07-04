@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -360,6 +361,7 @@ const Dashboard = () => {
           <TabsContent value="settings">
             <div className="space-y-6">
               <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
+              <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
             </div>
           </TabsContent>
         </Tabs>

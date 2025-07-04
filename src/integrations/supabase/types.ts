@@ -113,69 +113,144 @@ export type Database = {
       establishments: {
         Row: {
           address: string | null
+          body_background_color: string | null
+          body_background_type: string | null
+          body_gradient_angle: number | null
+          body_gradient_color1: string | null
+          body_gradient_color2: string | null
           color_primary: string | null
           created_at: string
           email: string
           facebook_url: string | null
           favicon_url: string | null
           feedbacks: Json | null
+          footer_background_color: string | null
+          footer_font_family: string | null
+          footer_font_size: string | null
           footer_text: string | null
+          footer_text_align: string | null
+          header_background_color: string | null
+          header_background_type: string | null
+          header_gradient_angle: number | null
+          header_gradient_color1: string | null
+          header_gradient_color2: string | null
+          header_position: string | null
+          hero_background_color: string | null
           hero_description: string | null
           hero_image_url: string | null
           hero_title: string | null
+          hero_title_font_family: string | null
+          hero_title_font_size: string | null
           id: string
           instagram_url: string | null
           logo_url: string | null
           name: string
           password_hash: string | null
           phone: string | null
+          section2_content: string | null
+          section2_enabled: boolean | null
           services: Json | null
+          services_background_color: string | null
+          services_background_image: string | null
+          services_background_type: string | null
+          services_title_font_family: string | null
+          services_title_font_size: string | null
           slug: string
           updated_at: string
           whatsapp: string | null
         }
         Insert: {
           address?: string | null
+          body_background_color?: string | null
+          body_background_type?: string | null
+          body_gradient_angle?: number | null
+          body_gradient_color1?: string | null
+          body_gradient_color2?: string | null
           color_primary?: string | null
           created_at?: string
           email: string
           facebook_url?: string | null
           favicon_url?: string | null
           feedbacks?: Json | null
+          footer_background_color?: string | null
+          footer_font_family?: string | null
+          footer_font_size?: string | null
           footer_text?: string | null
+          footer_text_align?: string | null
+          header_background_color?: string | null
+          header_background_type?: string | null
+          header_gradient_angle?: number | null
+          header_gradient_color1?: string | null
+          header_gradient_color2?: string | null
+          header_position?: string | null
+          hero_background_color?: string | null
           hero_description?: string | null
           hero_image_url?: string | null
           hero_title?: string | null
+          hero_title_font_family?: string | null
+          hero_title_font_size?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
           name: string
           password_hash?: string | null
           phone?: string | null
+          section2_content?: string | null
+          section2_enabled?: boolean | null
           services?: Json | null
+          services_background_color?: string | null
+          services_background_image?: string | null
+          services_background_type?: string | null
+          services_title_font_family?: string | null
+          services_title_font_size?: string | null
           slug: string
           updated_at?: string
           whatsapp?: string | null
         }
         Update: {
           address?: string | null
+          body_background_color?: string | null
+          body_background_type?: string | null
+          body_gradient_angle?: number | null
+          body_gradient_color1?: string | null
+          body_gradient_color2?: string | null
           color_primary?: string | null
           created_at?: string
           email?: string
           facebook_url?: string | null
           favicon_url?: string | null
           feedbacks?: Json | null
+          footer_background_color?: string | null
+          footer_font_family?: string | null
+          footer_font_size?: string | null
           footer_text?: string | null
+          footer_text_align?: string | null
+          header_background_color?: string | null
+          header_background_type?: string | null
+          header_gradient_angle?: number | null
+          header_gradient_color1?: string | null
+          header_gradient_color2?: string | null
+          header_position?: string | null
+          hero_background_color?: string | null
           hero_description?: string | null
           hero_image_url?: string | null
           hero_title?: string | null
+          hero_title_font_family?: string | null
+          hero_title_font_size?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
           name?: string
           password_hash?: string | null
           phone?: string | null
+          section2_content?: string | null
+          section2_enabled?: boolean | null
           services?: Json | null
+          services_background_color?: string | null
+          services_background_image?: string | null
+          services_background_type?: string | null
+          services_title_font_family?: string | null
+          services_title_font_size?: string | null
           slug?: string
           updated_at?: string
           whatsapp?: string | null

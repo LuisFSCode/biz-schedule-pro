@@ -76,10 +76,52 @@ const PublicLanding = () => {
 
   const primaryColor = establishment.color_primary || '#3B82F6';
 
+  // Generate dynamic styles based on establishment settings
+  const getBodyStyles = () => {
+    if (establishment.body_background_type === 'gradient') {
+      return {
+        background: `linear-gradient(${establishment.body_gradient_angle || 45}deg, ${establishment.body_gradient_color1 || '#3B82F6'}, ${establishment.body_gradient_color2 || '#8B5CF6'})`
+      };
+    }
+    return {
+      backgroundColor: establishment.body_background_color || '#ffffff'
+    };
+  };
+
+  const getHeaderStyles = () => {
+    let styles: any = {
+      position: establishment.header_position || 'relative'
+    };
+
+    if (establishment.header_background_type === 'gradient') {
+      styles.background = `linear-gradient(${establishment.header_gradient_angle || 45}deg, ${establishment.header_gradient_color1 || '#3B82F6'}, ${establishment.header_gradient_color2 || '#8B5CF6'})`;
+    } else {
+      styles.backgroundColor = establishment.header_background_color || '#ffffff';
+    }
+
+    return styles;
+  };
+
+  const getServicesStyles = () => {
+    if (establishment.services_background_type === 'image' && establishment.services_background_image) {
+      return {
+        backgroundImage: `url(${establishment.services_background_image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      };
+    }
+    return {
+      backgroundColor: establishment.services_background_color || '#ffffff'
+    };
+  };
+
   return (
-    <div className="min-h-screen" style={{ '--primary-color': primaryColor } as React.CSSProperties}>
+    <div className="min-h-screen" style={{ ...getBodyStyles(), ['--primary-color' as any]: primaryColor }}>
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header 
+        className={`border-b ${establishment.header_position === 'fixed' ? 'fixed top-0 left-0 right-0 z-50' : 'relative'}`}
+        style={getHeaderStyles()}
+      >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {establishment.logo_url ? (
@@ -104,9 +146,9 @@ const PublicLanding = () => {
 
       {/* Hero Section */}
       <section 
-        className="py-20 px-4 text-center text-white relative overflow-hidden"
+        className={`py-20 px-4 text-center text-white relative overflow-hidden ${establishment.header_position === 'fixed' ? 'pt-32' : ''}`}
         style={{
-          backgroundColor: primaryColor,
+          backgroundColor: establishment.hero_background_color || primaryColor,
           backgroundImage: establishment.hero_image_url ? `url(${establishment.hero_image_url})` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
@@ -116,7 +158,10 @@ const PublicLanding = () => {
           <div className="absolute inset-0 bg-black/50"></div>
         )}
         <div className="container mx-auto relative z-10">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 
+            className={`text-${establishment.hero_title_font_size || '4xl'} md:text-${establishment.hero_title_font_size || '6xl'} font-bold mb-6`}
+            style={{ fontFamily: establishment.hero_title_font_family || 'inherit' }}
+          >
             {establishment.hero_title || 'Bem-vindos ao nosso estabelecimento'}
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
@@ -130,9 +175,14 @@ const PublicLanding = () => {
 
       {/* Services Section */}
       {services.length > 0 && (
-        <section className="py-16 px-4">
+        <section className="py-16 px-4" style={getServicesStyles()}>
           <div className="container mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
+            <h2 
+              className={`text-${establishment.services_title_font_size || '3xl'} font-bold text-center mb-12`}
+              style={{ fontFamily: establishment.services_title_font_family || 'inherit' }}
+            >
+              Nossos Serviços
+            </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {services.map((service, index) => (
                 <Card key={index}>
@@ -156,6 +206,11 @@ const PublicLanding = () => {
             </div>
           </div>
         </section>
+      )}
+
+      {/* Custom Section 2 */}
+      {establishment.section2_enabled && establishment.section2_content && (
+        <div dangerouslySetInnerHTML={{ __html: establishment.section2_content }} />
       )}
 
       {/* About Section */}
@@ -204,9 +259,15 @@ const PublicLanding = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 px-4">
-        <div className="container mx-auto text-center">
-          <p className="text-muted-foreground">
+      <footer 
+        className="border-t py-8 px-4"
+        style={{ backgroundColor: establishment.footer_background_color || '#f8f9fa' }}
+      >
+        <div className="container mx-auto">
+          <p 
+            className={`text-${establishment.footer_font_size || 'sm'} text-${establishment.footer_text_align || 'center'}`}
+            style={{ fontFamily: establishment.footer_font_family || 'inherit' }}
+          >
             {establishment.footer_text || 'Desenvolvido com SchedulePro'}
           </p>
         </div>
