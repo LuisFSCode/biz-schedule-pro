@@ -103,3 +103,62 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* GrapesJS Styles */
+@import url('https://unpkg.com/grapesjs@0.21.7/dist/css/grapes.min.css');
+
+.grapesjs-editor-wrapper .gjs-editor {
+  background: #f8f9fa;
+}
+
+.grapesjs-editor-wrapper .gjs-pn-panel {
+  background: #ffffff;
+  border-right: 1px solid #ddd;
+}
+
+.grapesjs-editor-wrapper .gjs-pn-btn {
+  padding: 8px 12px;
+  margin: 2px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.grapesjs-editor-wrapper .gjs-pn-btn:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+.grapesjs-editor-wrapper .gjs-pn-btn.gjs-pn-active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.grapesjs-editor-wrapper .gjs-block {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.grapesjs-editor-wrapper .gjs-block:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.grapesjs-editor-wrapper .gjs-frame {
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+}
+
+.grapesjs-editor-wrapper .gjs-cv-canvas {
+  background: white;
+}
