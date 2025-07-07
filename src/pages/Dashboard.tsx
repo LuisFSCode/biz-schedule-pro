@@ -198,11 +198,11 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="flex h-full w-full overflow-hidden">
+      <div className="flex h-full w-full">
         <Tabs defaultValue="appointments" className="flex w-full h-full">
           {/* sidebar lateral */}
-          <div className={`relative  ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out `}>
-            <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40  top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <div className={`relative flex-shrink-0 ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out`}>
+            <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40 top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
                 {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="p-0 w-4 h-4" />}
             </div>
             <TabsList className={`bg-gray-200/40 flex flex-col items-center justify-start h-full py-4 gap-2 px-2 rounded-none border border-r-2`}>
@@ -262,154 +262,156 @@ const Dashboard = () => {
             </TabsList>
           </div>
 
-          {/* main */}
-          {/* Agendamentos */}
-          <TabsContent value="appointments" className='flex-1 px-4'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Próximos Agendamentos</CardTitle>
-                <CardDescription>
-                  {appointments.length} agendamento(s) encontrado(s)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {appointments.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {appointments.map((appointment) => (
-                      <div key={appointment.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{appointment.service_name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              Cliente: {appointment.customers?.name || 'N/A'}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
-                            </p>
-                            {appointment.notes && (
-                              <p className="text-sm text-muted-foreground mt-2">
-                                Observações: {appointment.notes}
+          {/* main content area */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Agendamentos */}
+            <TabsContent value="appointments" className="flex-1 px-4 py-4 overflow-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Próximos Agendamentos</CardTitle>
+                  <CardDescription>
+                    {appointments.length} agendamento(s) encontrado(s)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {appointments.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {appointments.map((appointment) => (
+                        <div key={appointment.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold">{appointment.service_name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                Cliente: {appointment.customers?.name || 'N/A'}
                               </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                              appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {appointment.status === 'confirmed' ? 'Confirmado' :
-                               appointment.status === 'pending' ? 'Pendente' : appointment.status}
-                            </span>
-                            {appointment.service_price && (
-                              <p className="text-sm font-semibold mt-1">
-                                R$ {appointment.service_price.toFixed(2)}
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
                               </p>
-                            )}
+                              {appointment.notes && (
+                                <p className="text-sm text-muted-foreground mt-2">
+                                  Observações: {appointment.notes}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {appointment.status === 'confirmed' ? 'Confirmado' :
+                                 appointment.status === 'pending' ? 'Pendente' : appointment.status}
+                              </span>
+                              {appointment.service_price && (
+                                <p className="text-sm font-semibold mt-1">
+                                  R$ {appointment.service_price.toFixed(2)}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          {/* Serviços */}
-          <TabsContent value="services" className='flex-1 px-4'>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Serviços Oferecidos</CardTitle>
-                  <CardDescription>
-                    Gerencie os serviços do seu estabelecimento
-                  </CardDescription>
-                </div>
-                <Button onClick={addService}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Serviço
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {services.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">Nenhum serviço cadastrado</p>
+            {/* Serviços */}
+            <TabsContent value="services" className="flex-1 px-4 py-4 overflow-auto">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Serviços Oferecidos</CardTitle>
+                    <CardDescription>
+                      Gerencie os serviços do seu estabelecimento
+                    </CardDescription>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    {services.map((service) => (
-                      <ServiceCard 
-                        key={service.id} 
-                        service={service} 
-                        onUpdate={updateService}
-                        onDelete={deleteService}
-                      />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  <Button onClick={addService}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Serviço
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {services.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">Nenhum serviço cadastrado</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {services.map((service) => (
+                        <ServiceCard 
+                          key={service.id} 
+                          service={service} 
+                          onUpdate={updateService}
+                          onDelete={deleteService}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          {/* Relatórios */}
-          <TabsContent value="analytics" className='flex-1 px-4'>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{appointments.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {appointments.filter(a => a.status === 'confirmed').length}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{services.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    R$ {appointments
-                      .filter(a => a.status === 'confirmed' && a.service_price)
-                      .reduce((sum, a) => sum + (a.service_price || 0), 0)
-                      .toFixed(2)}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+            {/* Relatórios */}
+            <TabsContent value="analytics" className="flex-1 px-4 py-4 overflow-auto">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{appointments.length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {appointments.filter(a => a.status === 'confirmed').length}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{services.length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      R$ {appointments
+                        .filter(a => a.status === 'confirmed' && a.service_price)
+                        .reduce((sum, a) => sum + (a.service_price || 0), 0)
+                        .toFixed(2)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
-          {/* Configurações */}
-          <TabsContent value="settings" className='flex-1 px-4 overflow-hidden'>
-            <div className="h-full overflow-y-auto space-y-6">
-              <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
-              <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
-            </div>
-          </TabsContent>
+            {/* Configurações */}
+            <TabsContent value="settings" className="flex-1 px-4 py-4 overflow-auto">
+              <div className="space-y-6">
+                <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
+                <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
+              </div>
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>
