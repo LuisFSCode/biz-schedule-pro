@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
+// Componente para renderização condicional do conteúdo das tabs
+const ConditionalTabsContent = ({ value, activeTab, children, ...props }: any) => {
+  if (value !== activeTab) return null;
+  return <TabsContent value={value} {...props}>{children}</TabsContent>;
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -20,6 +27,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("appointments");
 
   useEffect(() => {
     checkAuth();
@@ -199,7 +207,7 @@ const Dashboard = () => {
       </header>
 
       <div className="flex h-full w-full">
-        <Tabs defaultValue="appointments" className="flex w-full h-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full h-full">
           {/* sidebar lateral */}
           <div className={`relative flex-shrink-0 ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out`}>
             <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40 top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -265,7 +273,7 @@ const Dashboard = () => {
           {/* main content area */}
           <div className="flex-1 flex flex-col min-h-0">
             {/* Agendamentos */}
-            <TabsContent value="appointments" className="flex-1 px-4 py-4 overflow-auto">
+            <ConditionalTabsContent value="appointments" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
               <Card>
                 <CardHeader>
                   <CardTitle>Próximos Agendamentos</CardTitle>
@@ -320,10 +328,10 @@ const Dashboard = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </ConditionalTabsContent>
 
             {/* Serviços */}
-            <TabsContent value="services" className="flex-1 px-4 py-4 overflow-auto">
+            <ConditionalTabsContent value="services" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -357,10 +365,10 @@ const Dashboard = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </ConditionalTabsContent>
 
             {/* Relatórios */}
-            <TabsContent value="analytics" className="flex-1 px-4 py-4 overflow-auto">
+            <ConditionalTabsContent value="analytics" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -402,15 +410,15 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </div>
-            </TabsContent>
+            </ConditionalTabsContent>
 
             {/* Configurações */}
-            <TabsContent value="settings" className="flex-1 px-4 py-4 overflow-auto">
+            <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
               <div className="space-y-6">
                 <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
                 <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
               </div>
-            </TabsContent>
+            </ConditionalTabsContent>
           </div>
         </Tabs>
       </div>
