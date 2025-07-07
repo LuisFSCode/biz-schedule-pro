@@ -178,7 +178,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-0 border-2 border-black overflow-y-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
+    <div className="overflow-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -198,8 +198,8 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="container border-2 border-red-600 p-0 h-full overflow-hidden ">
-        <Tabs defaultValue="appointments" className=" grid grid-cols-2 grid-flow-row-dense w-full border border-blue-600 p-0 h-full ">
+      <div className="flex h-full w-full overflow-hidden">
+        <Tabs defaultValue="appointments" className="flex w-full h-full">
           {/* sidebar lateral */}
           <div className={`relative  ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out `}>
             <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40  top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -264,7 +264,7 @@ const Dashboard = () => {
 
           {/* main */}
           {/* Agendamentos */}
-          <TabsContent value="appointments" className=' flex-1 px-4 border border-green-600'>
+          <TabsContent value="appointments" className='flex-1 px-4'>
             <Card>
               <CardHeader>
                 <CardTitle>Próximos Agendamentos</CardTitle>
@@ -404,8 +404,8 @@ const Dashboard = () => {
           </TabsContent>
 
           {/* Configurações */}
-          <TabsContent value="settings" className='px-4 border-2 flex flex-col border-yellow-500 h-5 overflow-hidden'>
-            <div className="space-y-6 border-2 w-full border-green-600 h-full overflow-auto">
+          <TabsContent value="settings" className='flex-1 px-4 overflow-hidden'>
+            <div className="h-full overflow-y-auto space-y-6">
               <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
               <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
             </div>
