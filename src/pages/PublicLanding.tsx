@@ -208,11 +208,6 @@ const PublicLanding = () => {
         </section>
       )}
 
-      {/* Custom Section 2 */}
-      {establishment.section2_enabled && establishment.section2_content && (
-        <div dangerouslySetInnerHTML={{ __html: establishment.section2_content }} />
-      )}
-
       {/* About Section */}
       <section className="py-16 px-4 bg-muted/30">
         <div className="container mx-auto">
@@ -256,6 +251,10 @@ const PublicLanding = () => {
             </div>
           </div>
         </div>
+        {/* Custom Section 2 */}
+        {establishment.section2_enabled && establishment.section2_content && (
+          <div dangerouslySetInnerHTML={{ __html: establishment.section2_content }} />
+        )}
       </section>
 
       {/* Footer */}
