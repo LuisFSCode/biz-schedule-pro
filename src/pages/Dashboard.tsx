@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2 } from "lucide-react";
+import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2, LayoutDashboard, BriefcaseBusiness, PanelLeftClose, PanelRightClose, Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,8 @@ const Dashboard = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -166,7 +168,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className=" flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Carregando dashboard...</p>
@@ -176,9 +178,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
+    <div className="p-0 border-2 border-black overflow-y-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -196,29 +198,73 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="appointments" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="appointments" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Agendamentos
-            </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Serviços
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Relatórios
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Configurações
-            </TabsTrigger>
-          </TabsList>
+      <div className="container border-2 border-red-600 p-0 h-full overflow-hidden ">
+        <Tabs defaultValue="appointments" className=" grid grid-cols-2 grid-flow-row-dense w-full border border-blue-600 p-0 h-full ">
+          {/* sidebar lateral */}
+          <div className={`relative  ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out `}>
+            <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40  top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="p-0 w-4 h-4" />}
+            </div>
+            <TabsList className={`bg-gray-200/40 flex flex-col items-center justify-start h-full py-4 gap-2 px-2 rounded-none border border-r-2`}>
+              <div className="h-4"></div>
+              <TabsTrigger value="appointments" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
+                    <Calendar className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Agendamentos</p>
+                  </div> 
+                    
+                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-0 w-6 h-6`}>
+                      <Calendar className={`w-6 h-6 items-center`}/>
+                  </div> 
+                }
+              </TabsTrigger>
 
+             
+              <TabsTrigger value="services" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <BriefcaseBusiness className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Serviços</p>
+                  </div> 
+                    
+                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                      <BriefcaseBusiness className={'w-6 h-6'}/>
+                  </div>
+                }
+              </TabsTrigger>
+
+              <TabsTrigger value="analytics" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <BarChart3 className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Relatórios</p>
+                  </div> 
+                    
+                ) : 
+                <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                      <BarChart3 className={'w-6 h-6'}/>
+                  </div>
+                }
+              </TabsTrigger>
+
+              <TabsTrigger value="settings" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <Settings className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Configurações</p>
+                  </div> 
+                    
+                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                      <Settings className={'w-6 h-6'}/>
+                  </div>}
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          {/* main */}
           {/* Agendamentos */}
-          <TabsContent value="appointments">
+          <TabsContent value="appointments" className=' flex-1 px-4 border border-green-600'>
             <Card>
               <CardHeader>
                 <CardTitle>Próximos Agendamentos</CardTitle>
@@ -276,7 +322,7 @@ const Dashboard = () => {
           </TabsContent>
 
           {/* Serviços */}
-          <TabsContent value="services">
+          <TabsContent value="services" className='flex-1 px-4'>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
@@ -313,7 +359,7 @@ const Dashboard = () => {
           </TabsContent>
 
           {/* Relatórios */}
-          <TabsContent value="analytics">
+          <TabsContent value="analytics" className='flex-1 px-4'>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -358,8 +404,8 @@ const Dashboard = () => {
           </TabsContent>
 
           {/* Configurações */}
-          <TabsContent value="settings">
-            <div className="space-y-6">
+          <TabsContent value="settings" className='px-4 border-2 flex flex-col border-yellow-500 h-5 overflow-hidden'>
+            <div className="space-y-6 border-2 w-full border-green-600 h-full overflow-auto">
               <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
               <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
             </div>
@@ -484,7 +530,7 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
   };
 
   return (
-    <Card>
+    <Card className='border-2 border-violet-800 '>
       <CardHeader>
         <CardTitle>Configurações do Estabelecimento</CardTitle>
         <CardDescription>

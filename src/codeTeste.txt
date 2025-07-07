@@ -1,0 +1,107 @@
+<div className="flex md:flex-row">
+        <aside className={` relative pr-5 ${sidebarOpen ? ' w-64' : ' w-16'} transition-all duration-700 ease-in-out`}>
+          {/* Botão de fechar a sidebar */}
+          <div  className="absolute top-3 right-1 p-0 w-5 h-5" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            {sidebarOpen ? <PanelLeftClose className="w-7 h-6 p-0" /> : <PanelRightClose className="w-7 h-6 p-0" />}
+          </div>
+          <div className="border-r-2 h-full p-0">
+            <div className={`container py-1 px-2 h-full`}>
+              <div className={`text-lg font-semibold h-9 items-center flex`}>
+                <h2 className={`text-lg font-semibold ${sidebarOpen ? "block" : "hidden" }`}>Menu</h2>
+              </div>
+              <ul className="space-y-2 mt-2 flex flex-col gap-4">
+                
+                <li className="flex items-center">
+                  <div onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center cursor-pointer space-x-2 text-sm font-medium">
+                    <LayoutDashboard className="w-6 h-6" />
+                    <p className={`transition-all duration-700 ease-in-out ${sidebarOpen ? "w-auto" : "w-0 hidden"}`}>Dashboard</p>
+                  </div>
+                </li>
+
+                <li className="flex items-center">
+                  <div onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center cursor-pointer space-x-2 text-sm font-medium">
+                    <Calendar className="w-6 h-6" />
+                    <p className={`transition-all duration-700 ease-in-out ${sidebarOpen ? "w-auto" : "w-0 hidden"}`}>Agendamentos</p>
+                  </div>
+                  
+                </li>
+                <li className="flex items-center">
+                  <div onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center cursor-pointer space-x-2 text-sm font-medium">
+                    <BriefcaseBusiness className="w-6 h-6" />
+                    <p className={(sidebarOpen ? "block" : "hidden" )}>Serviços</p>
+                  </div>
+                </li>
+                <li className="flex items-center">
+                  <div onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center cursor-pointer space-x-2 text-sm font-medium">
+                    <BarChart3 className="w-6 h-6" />
+                    <p className={(sidebarOpen ? "block" : "hidden" )}>Relatórios</p>
+                  </div>
+                </li>
+                <li className="flex items-center">
+                  <div onClick={() => navigate('/dashboard')} className="inline-flex items-center justify-center cursor-pointer space-x-2 text-sm font-medium">
+                    <Settings className="w-6 h-6" />
+                    <p className={(sidebarOpen ? "block" : "hidden" )}>Configurações</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+
+        <main className="container mx-auto px-4 py-8 border border-red-400">
+            <Card>
+              <CardHeader>
+                <CardTitle>Próximos Agendamentos</CardTitle>
+                <CardDescription>
+                  {appointments.length} agendamento(s) encontrado(s)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {appointments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {appointments.map((appointment) => (
+                      <div key={appointment.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold">{appointment.service_name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Cliente: {appointment.customers?.name || 'N/A'}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
+                            </p>
+                            {appointment.notes && (
+                              <p className="text-sm text-muted-foreground mt-2">
+                                Observações: {appointment.notes}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                              appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {appointment.status === 'confirmed' ? 'Confirmado' :
+                               appointment.status === 'pending' ? 'Pendente' : appointment.status}
+                            </span>
+                            {appointment.service_price && (
+                              <p className="text-sm font-semibold mt-1">
+                                R$ {appointment.service_price.toFixed(2)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+        </main>
+      </div>
