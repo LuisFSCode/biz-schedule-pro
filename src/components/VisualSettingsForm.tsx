@@ -17,6 +17,7 @@ interface VisualSettingsFormProps {
 }
 
 export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFormProps) => {
+  const [activeTab, setActiveTab] = useState("body");
   const [formData, setFormData] = useState({
     // Body settings
     body_background_type: establishment?.body_background_type || 'solid',
@@ -96,7 +97,7 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Tabs defaultValue="body" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="body">Body</TabsTrigger>
               <TabsTrigger value="header">Header</TabsTrigger>
