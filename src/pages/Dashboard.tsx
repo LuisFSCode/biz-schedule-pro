@@ -558,6 +558,7 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
 
   return (
     <div className="h-full">
+    
       <div className="flex h-full w-full ">
         <Tabs defaultValue="ConfigSite" className="flex flex-col w-full h-full ">
           <div className='transition-all duration-400 ease-in-out '>
