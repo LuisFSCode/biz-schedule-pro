@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ElementorEditor } from "@/components/ElementorEditor";
@@ -97,18 +98,35 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="body">Body</TabsTrigger>
-              <TabsTrigger value="header">Header</TabsTrigger>
-              <TabsTrigger value="hero">Hero</TabsTrigger>
-              <TabsTrigger value="services">Serviços</TabsTrigger>
-              <TabsTrigger value="section2">Seção 2</TabsTrigger>
-              <TabsTrigger value="footer">Footer</TabsTrigger>
-            </TabsList>
+          <div className="w-full">
+            <div className="grid w-full grid-cols-6 bg-muted p-1 rounded-lg">
+              {[
+                { value: "body", label: "Body" },
+                { value: "header", label: "Header" },
+                { value: "hero", label: "Hero" },
+                { value: "services", label: "Serviços" },
+                { value: "section2", label: "Seção 2" },
+                { value: "footer", label: "Footer" }
+              ].map((tab) => (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => setActiveTab(tab.value)}
+                  className={cn(
+                    "px-3 py-2 text-sm font-medium rounded-md transition-all",
+                    activeTab === tab.value
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
             {/* Body Settings */}
-            <TabsContent value="body" className="space-y-4">
+            {activeTab === "body" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Plano de Fundo do Site</h3>
               
               <div>
@@ -169,10 +187,12 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </div>
                 </div>
               )}
-            </TabsContent>
+            </div>
+            )}
 
             {/* Header Settings */}
-            <TabsContent value="header" className="space-y-4">
+            {activeTab === "header" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Configurações do Header</h3>
               
               <div>
@@ -246,10 +266,12 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </div>
                 </div>
               )}
-            </TabsContent>
+            </div>
+            )}
 
             {/* Hero Settings */}
-            <TabsContent value="hero" className="space-y-4">
+            {activeTab === "hero" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Seção Hero</h3>
               
               <div>
@@ -285,10 +307,12 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </SelectContent>
                 </Select>
               </div>
-            </TabsContent>
+            </div>
+            )}
 
             {/* Services Settings */}
-            <TabsContent value="services" className="space-y-4">
+            {activeTab === "services" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Seção de Serviços</h3>
               
               <div>
@@ -349,10 +373,12 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </SelectContent>
                 </Select>
               </div>
-            </TabsContent>
+            </div>
+            )}
 
             {/* Section 2 Settings */}
-            <TabsContent value="section2" className="space-y-4">
+            {activeTab === "section2" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Seção Personalizada</h3>
               
               <div className="flex items-center space-x-2">
@@ -408,10 +434,12 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </Tabs>
                 </div>
               )}
-            </TabsContent>
+            </div>
+            )}
 
             {/* Footer Settings */}
-            <TabsContent value="footer" className="space-y-4">
+            {activeTab === "footer" && (
+            <div className="space-y-4 mt-6">
               <h3 className="text-lg font-semibold">Configurações do Footer</h3>
               
               <div>
@@ -461,8 +489,9 @@ export const VisualSettingsForm = ({ establishment, onUpdate }: VisualSettingsFo
                   </SelectContent>
                 </Select>
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+            )}
+          </div>
           
           <Separator />
           <Button type="submit" className="w-full">
