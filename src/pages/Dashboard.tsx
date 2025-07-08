@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
+
+interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; }
+
+// Componente para renderização condicional do conteúdo das tabs
+
+
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -20,6 +28,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("appointments");
+  const ConditionalTabsContent = ({ activeTab, value, className, children }: tabsProps) => {
+    return (
+      <TabsContent value={value} className={className}>
+        {activeTab === value ? children : null}
+      </TabsContent>
+    );
+  };
 
   useEffect(() => {
     checkAuth();
@@ -178,7 +195,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-0 border-2 border-black overflow-y-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
+    <div className=" overflow-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -198,14 +215,14 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="container border-2 border-red-600 p-0 h-full overflow-hidden ">
-        <Tabs defaultValue="appointments" className=" grid grid-cols-2 grid-flow-row-dense w-full border border-blue-600 p-0 h-full ">
+      <div className="flex h-full w-full ">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full h-full ">
           {/* sidebar lateral */}
-          <div className={`relative  ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out `}>
-            <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40  top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="p-0 w-4 h-4" />}
+          <div className={`relative flex-shrink-0 ${sidebarOpen ? 'w-40' : 'w-14'} border-r-2 border-gray-400/20 transition-all duration-400 ease-in-out`}>
+            <div className="absolute z-10 flex justify-center border-r-1 rounded-full border-none items-center -right-3 bg-gray-200 p-1 top-1 m-0" onClick={() =>  setSidebarOpen(!sidebarOpen)}>
+                {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="w-4 h-4 p-0" />}
             </div>
-            <TabsList className={`bg-gray-200/40 flex flex-col items-center justify-start h-full py-4 gap-2 px-2 rounded-none border border-r-2`}>
+            <TabsList className={` flex flex-col items-center justify-start h-full py-4 gap-2 px-2 rounded-none   transition-all duration-200 ease-in-out`}>
               <div className="h-4"></div>
               <TabsTrigger value="appointments" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
                 {sidebarOpen ? (
@@ -249,172 +266,181 @@ const Dashboard = () => {
               </TabsTrigger>
 
               <TabsTrigger value="settings" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
-                {sidebarOpen ? (
-                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                    <Settings className={`w-6 h-6`}/>
-                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Configurações</p>
-                  </div> 
+                  {sidebarOpen ? (
+                  
+                    <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                      <Settings className={`w-6 h-6`}/>
+                      <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Conta</p>
+                    </div> 
                     
                 ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
                       <Settings className={'w-6 h-6'}/>
                   </div>}
               </TabsTrigger>
+              
             </TabsList>
           </div>
 
-          {/* main */}
-          {/* Agendamentos */}
-          <TabsContent value="appointments" className=' flex-1 px-4 border border-green-600'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Próximos Agendamentos</CardTitle>
-                <CardDescription>
-                  {appointments.length} agendamento(s) encontrado(s)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {appointments.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {appointments.map((appointment) => (
-                      <div key={appointment.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{appointment.service_name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              Cliente: {appointment.customers?.name || 'N/A'}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
-                            </p>
-                            {appointment.notes && (
-                              <p className="text-sm text-muted-foreground mt-2">
-                                Observações: {appointment.notes}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                              appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {appointment.status === 'confirmed' ? 'Confirmado' :
-                               appointment.status === 'pending' ? 'Pendente' : appointment.status}
-                            </span>
-                            {appointment.service_price && (
-                              <p className="text-sm font-semibold mt-1">
-                                R$ {appointment.service_price.toFixed(2)}
-                              </p>
-                            )}
-                          </div>
-                        </div>
+          {/* main content */}
+          <div className="flex-1 flex relative overflow-hidden h-full">
+            
+            {/* Agendamentos */}
+            <ConditionalTabsContent value="appointments" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Próximos Agendamentos</CardTitle>
+                    <CardDescription>
+                      {appointments.length} agendamento(s) encontrado(s)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {appointments.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
                       </div>
-                    ))}
+                    ) : (
+                      <div className="space-y-4">
+                        {appointments.map((appointment) => (
+                          <div key={appointment.id} className="border rounded-lg p-4">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="font-semibold">{appointment.service_name}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  Cliente: {appointment.customers?.name || 'N/A'}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
+                                </p>
+                                {appointment.notes && (
+                                  <p className="text-sm text-muted-foreground mt-2">
+                                    Observações: {appointment.notes}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                  appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                  appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {appointment.status === 'confirmed' ? 'Confirmado' :
+                                  appointment.status === 'pending' ? 'Pendente' : appointment.status}
+                                </span>
+                                {appointment.service_price && (
+                                  <p className="text-sm font-semibold mt-1">
+                                    R$ {appointment.service_price.toFixed(2)}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+            </ConditionalTabsContent>
+            
+            {/* Serviços */}
+            <ConditionalTabsContent value="services" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Serviços Oferecidos</CardTitle>
+                    <CardDescription>
+                      Gerencie os serviços do seu estabelecimento
+                    </CardDescription>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  <Button onClick={addService}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Serviço
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {services.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">Nenhum serviço cadastrado</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {services.map((service) => (
+                        <ServiceCard 
+                          key={service.id} 
+                          service={service} 
+                          onUpdate={updateService}
+                          onDelete={deleteService}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </ConditionalTabsContent>
 
-          {/* Serviços */}
-          <TabsContent value="services" className='flex-1 px-4'>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Serviços Oferecidos</CardTitle>
-                  <CardDescription>
-                    Gerencie os serviços do seu estabelecimento
-                  </CardDescription>
+            {/* Relatórios */}
+            <ConditionalTabsContent value="analytics" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                          <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                              <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="text-2xl font-bold">{appointments.length}</div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                              <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="text-2xl font-bold">
+                                {appointments.filter(a => a.status === 'confirmed').length}
+                              </div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                              <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="text-2xl font-bold">{services.length}</div>
+                            </CardContent>
+                          </Card>
+                          <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                              <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="text-2xl font-bold">
+                                R$ {appointments
+                                  .filter(a => a.status === 'confirmed' && a.service_price)
+                                  .reduce((sum, a) => sum + (a.service_price || 0), 0)
+                                  .toFixed(2)}
+                              </div>
+                            </CardContent>
+                          </Card>
+                      </div> 
+            </ConditionalTabsContent>
+            
+
+            {/* Configurações */}
+            <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 absolute w-full h-full">
+                <div className="space-y-6 w-full h-full">
+                  <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
                 </div>
-                <Button onClick={addService}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Serviço
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {services.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">Nenhum serviço cadastrado</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {services.map((service) => (
-                      <ServiceCard 
-                        key={service.id} 
-                        service={service} 
-                        onUpdate={updateService}
-                        onDelete={deleteService}
-                      />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Relatórios */}
-          <TabsContent value="analytics" className='flex-1 px-4'>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{appointments.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {appointments.filter(a => a.status === 'confirmed').length}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{services.length}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    R$ {appointments
-                      .filter(a => a.status === 'confirmed' && a.service_price)
-                      .reduce((sum, a) => sum + (a.service_price || 0), 0)
-                      .toFixed(2)}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Configurações */}
-          <TabsContent value="settings" className='px-4 border-2 flex flex-col border-yellow-500 h-5 overflow-hidden'>
-            <div className="space-y-6 border-2 w-full border-green-600 h-full overflow-auto">
-              <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
-              <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
-            </div>
-          </TabsContent>
+            </ConditionalTabsContent>
+        
+          </div>
+          {/* end content main */}
         </Tabs>
       </div>
     </div>
   );
 };
+
+
 
 const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -528,158 +554,206 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
     e.preventDefault();
     onUpdate(formData);
   };
+  
 
   return (
-    <Card className='border-2 border-violet-800 '>
-      <CardHeader>
-        <CardTitle>Configurações do Estabelecimento</CardTitle>
-        <CardDescription>
-          Atualize as informações do seu negócio
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Informações do Estabelecimento</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Nome do Estabelecimento</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Telefone</Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="whatsapp">WhatsApp</Label>
-                <Input
-                  id="whatsapp"
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="address">Endereço</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="instagram_url">Instagram</Label>
-                <Input
-                  id="instagram_url"
-                  placeholder="https://instagram.com/seuusuario"
-                  value={formData.instagram_url}
-                  onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="facebook_url">Facebook</Label>
-                <Input
-                  id="facebook_url"
-                  placeholder="https://facebook.com/suapagina"
-                  value={formData.facebook_url}
-                  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
-                />
-              </div>
-            </div>
+    <div className="h-full">
+      <div className="flex h-full w-full ">
+        <Tabs defaultValue="ConfigSite" className="flex flex-col w-full h-full ">
+          <div className='transition-all duration-400 ease-in-out '>
+            <TabsList className="rounded-none px-4 flex gap-5">
+              <TabsTrigger value="AcountConfig" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
+                <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
+                  <Calendar className={`w-6 h-6`}/>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações Da Conta</p>
+                </div> 
+              </TabsTrigger>
+
+              <TabsTrigger value="ConfigSite" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
+                <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
+                  <Calendar className={`w-6 h-6`}/>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações Do Site</p>
+                </div> 
+              </TabsTrigger>
+
+              <TabsTrigger value="VisualSettingForm" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
+                <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
+                  <Calendar className={`w-6 h-6`}/>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações extras</p>
+                </div> 
+              </TabsTrigger>
+
+            </TabsList>
           </div>
+          <div className="flex-1 flex flex-col  relative h-full ">
+            <div className="relative flex h-full overflow-hidden">
+              <TabsContent value="AcountConfig" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto">
+                <Card className="shadow-lg  flex-1 px-4 py-4 h-full w-full ">
+                  <CardHeader>
+                    <CardTitle>Configurações do Estabelecimento</CardTitle>
+                    <CardDescription>
+                      Atualize as informações do seu negócio
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Informações do Estabelecimento</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="name">Nome do Estabelecimento</Label>
+                            <Input
+                              id="name"
+                              value={formData.name}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="phone">Telefone</Label>
+                            <Input
+                              id="phone"
+                              value={formData.phone}
+                              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="whatsapp">WhatsApp</Label>
+                            <Input
+                              id="whatsapp"
+                              value={formData.whatsapp}
+                              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="address">Endereço</Label>
+                            <Input
+                              id="address"
+                              value={formData.address}
+                              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="instagram_url">Instagram</Label>
+                            <Input
+                              id="instagram_url"
+                              placeholder="https://instagram.com/seuusuario"
+                              value={formData.instagram_url}
+                              onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="facebook_url">Facebook</Label>
+                            <Input
+                              id="facebook_url"
+                              placeholder="https://facebook.com/suapagina"
+                              value={formData.facebook_url}
+                              onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Button type="submit" className="w-full">
+                        Salvar Configurações
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Personalização da Landing Page</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="favicon_url">Favicon (URL)</Label>
-                <Input
-                  id="favicon_url"
-                  placeholder="https://exemplo.com/favicon.png"
-                  value={formData.favicon_url}
-                  onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground mt-1">Ícone que aparece na aba do navegador</p>
-              </div>
-              <div>
-                <Label htmlFor="logo_url">Logo (URL)</Label>
-                <Input
-                  id="logo_url"
-                  placeholder="https://exemplo.com/logo.png"
-                  value={formData.logo_url}
-                  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground mt-1">Logo que aparece no header</p>
-              </div>
-            </div>
+              <TabsContent value="ConfigSite" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto">
+                <Card>
+                  <CardHeader>
+                        <h3 className="text-lg font-semibold">Personalização da Landing Page</h3>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="favicon_url">Favicon (URL)</Label>
+                              <Input
+                                id="favicon_url"
+                                placeholder="https://exemplo.com/favicon.png"
+                                value={formData.favicon_url}
+                                onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">Ícone que aparece na aba do navegador</p>
+                            </div>
+                            <div>
+                              <Label htmlFor="logo_url">Logo (URL)</Label>
+                              <Input
+                                id="logo_url"
+                                placeholder="https://exemplo.com/logo.png"
+                                value={formData.logo_url}
+                                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">Logo que aparece no header</p>
+                            </div>
+                          </div>
 
-            <div>
-              <Label htmlFor="color_primary">Cor Principal</Label>
-              <Input
-                id="color_primary"
-                type="color"
-                value={formData.color_primary}
-                onChange={(e) => setFormData({ ...formData, color_primary: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Cor principal do tema da landing page</p>
-            </div>
-            
-            <div>
-              <Label htmlFor="hero_image_url">Imagem do Hero (URL)</Label>
-              <Input
-                id="hero_image_url"
-                placeholder="https://exemplo.com/hero-image.jpg"
-                value={formData.hero_image_url}
-                onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Imagem de fundo da seção principal</p>
-            </div>
-            
-            <div>
-              <Label htmlFor="hero_title">Título Principal</Label>
-              <Input
-                id="hero_title"
-                value={formData.hero_title}
-                onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Título que aparece na seção hero</p>
-            </div>
-            
-            <div>
-              <Label htmlFor="hero_description">Descrição Principal</Label>
-              <Textarea
-                id="hero_description"
-                value={formData.hero_description}
-                onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Descrição que aparece abaixo do título</p>
-            </div>
-            
-            <div>
-              <Label htmlFor="footer_text">Texto do Rodapé</Label>
-              <Input
-                id="footer_text"
-                value={formData.footer_text}
-                onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground mt-1">Texto que aparece no rodapé da página</p>
+                          <div>
+                            <Label htmlFor="color_primary">Cor Principal</Label>
+                            <Input
+                              id="color_primary"
+                              type="color"
+                              value={formData.color_primary}
+                              onChange={(e) => setFormData({ ...formData, color_primary: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">Cor principal do tema da landing page</p>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="hero_image_url">Imagem do Hero (URL)</Label>
+                            <Input
+                              id="hero_image_url"
+                              placeholder="https://exemplo.com/hero-image.jpg"
+                              value={formData.hero_image_url}
+                              onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">Imagem de fundo da seção principal</p>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="hero_title">Título Principal</Label>
+                            <Input
+                              id="hero_title"
+                              value={formData.hero_title}
+                              onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">Título que aparece na seção hero</p>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="hero_description">Descrição Principal</Label>
+                            <Textarea
+                              id="hero_description"
+                              value={formData.hero_description}
+                              onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">Descrição que aparece abaixo do título</p>
+                          </div>
+                          
+                          <div>
+                            <Label htmlFor="footer_text">Texto do Rodapé</Label>
+                            <Input
+                              id="footer_text"
+                              value={formData.footer_text}
+                              onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">Texto que aparece no rodapé da página</p>
+                          </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value='VisualSettingForm' className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto"> 
+                <VisualSettingsForm establishment={establishment} onUpdate={onUpdate} />
+              </TabsContent>
             </div>
           </div>
           
-          <Button type="submit" className="w-full">
-            Salvar Configurações
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </Tabs>
+      </div>
+    </div>
   );
 };
 
