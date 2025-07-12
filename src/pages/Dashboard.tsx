@@ -14,7 +14,6 @@ import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
 
 interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; }
-interface tabsP { tabValue: string; valueT: string; className?: string; children?: React.ReactNode; }
 // Componente para renderização condicional do conteúdo das tabs
 
 
