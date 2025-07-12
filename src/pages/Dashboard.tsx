@@ -12,8 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
-interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; };
 // Componente para renderização condicional do conteúdo das tabs
+const ConditionalTabsContent = ({ value, activeTab, children, ...props }: any) => {
+  if (value !== activeTab) return null;
+  return <TabsContent value={value} {...props}>{children}</TabsContent>;
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,6 +27,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("appointments");
 
   const [activeTab, setActiveTab] = useState("appointments");
   const ConditionalTabsContent = ({ activeTab, value, className, children }: tabsProps) => {
@@ -193,6 +197,7 @@ const Dashboard = () => {
   }
 
   return (
+
     <div className=" overflow-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
@@ -213,12 +218,12 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="flex h-full w-full ">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full h-full ">
+      <div className="flex h-full w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full h-full">
           {/* sidebar lateral */}
-          <div className={`relative flex-shrink-0 ${sidebarOpen ? 'w-40' : 'w-14'} border-r-2 border-gray-400/20 transition-all duration-400 ease-in-out`}>
-            <div className="absolute z-10 flex justify-center border-r-1 rounded-full border-none items-center -right-3 bg-gray-200 p-1 top-1 m-0" onClick={() =>  setSidebarOpen(!sidebarOpen)}>
-                {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="w-4 h-4 p-0" />}
+          <div className={`relative flex-shrink-0 ${sidebarOpen ? 'w-40' : 'w-14'} transition-all duration-200 ease-in-out`}>
+            <div className="absolute flex justify-center border-r-1 border-white items-center -right-2 bg-gray-200/40 top-1 m-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                {sidebarOpen ? <PanelLeftClose className="w-4 h-4 p-0" /> : <PanelRightClose className="p-0 w-4 h-4" />}
             </div>
             <TabsList className={` flex flex-col items-center justify-start h-full py-4 gap-2 px-2 rounded-none   transition-all duration-200 ease-in-out`}>
               <div className="h-4"></div>
@@ -292,69 +297,69 @@ const Dashboard = () => {
             </TabsList>
           </div>
 
-          {/* main content */}
-          <div className="flex-1 flex relative overflow-hidden h-full">
-            
+          {/* main content area */}
+          <div className="flex-1 flex flex-col min-h-0">
             {/* Agendamentos */}
-            <ConditionalTabsContent value="appointments" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Próximos Agendamentos</CardTitle>
-                    <CardDescription>
-                      {appointments.length} agendamento(s) encontrado(s)
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {appointments.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {appointments.map((appointment) => (
-                          <div key={appointment.id} className="border rounded-lg p-4">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h3 className="font-semibold">{appointment.service_name}</h3>
-                                <p className="text-sm text-muted-foreground">
-                                  Cliente: {appointment.customers?.name || 'N/A'}
+            <ConditionalTabsContent value="appointments" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Próximos Agendamentos</CardTitle>
+                  <CardDescription>
+                    {appointments.length} agendamento(s) encontrado(s)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {appointments.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {appointments.map((appointment) => (
+                        <div key={appointment.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold">{appointment.service_name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                Cliente: {appointment.customers?.name || 'N/A'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
+                              </p>
+                              {appointment.notes && (
+                                <p className="text-sm text-muted-foreground mt-2">
+                                  Observações: {appointment.notes}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {appointment.status === 'confirmed' ? 'Confirmado' :
+                                 appointment.status === 'pending' ? 'Pendente' : appointment.status}
+                              </span>
+                              {appointment.service_price && (
+                                <p className="text-sm font-semibold mt-1">
+                                  R$ {appointment.service_price.toFixed(2)}
                                 </p>
-                                {appointment.notes && (
-                                  <p className="text-sm text-muted-foreground mt-2">
-                                    Observações: {appointment.notes}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="text-right">
-                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                  appointment.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                                  appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {appointment.status === 'confirmed' ? 'Confirmado' :
-                                  appointment.status === 'pending' ? 'Pendente' : appointment.status}
-                                </span>
-                                {appointment.service_price && (
-                                  <p className="text-sm font-semibold mt-1">
-                                    R$ {appointment.service_price.toFixed(2)}
-                                  </p>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </ConditionalTabsContent>
-            
+
             {/* Serviços */}
-            <ConditionalTabsContent value="services" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+            <ConditionalTabsContent value="services" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
+
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -391,65 +396,59 @@ const Dashboard = () => {
             </ConditionalTabsContent>
 
             {/* Relatórios */}
-            <ConditionalTabsContent value="analytics" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
-                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">{appointments.length}</div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">
-                                {appointments.filter(a => a.status === 'confirmed').length}
-                              </div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">{services.length}</div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">
-                                R$ {appointments
-                                  .filter(a => a.status === 'confirmed' && a.service_price)
-                                  .reduce((sum, a) => sum + (a.service_price || 0), 0)
-                                  .toFixed(2)}
-                              </div>
-                            </CardContent>
-                          </Card>
-                      </div> 
-            </ConditionalTabsContent>
-            
-
-            {/* Configurações */}
-            <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 absolute w-full h-full">
-              <div className="space-y-6 w-full h-full">
-                <SettingsForm
-                  establishment={establishment}
-                  onUpdate={updateEstablishment}
-                  tabValue={settingsTab}
-                  setTabValue={setSettingsTab}
-                />
+            <ConditionalTabsContent value="analytics" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{appointments.length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {appointments.filter(a => a.status === 'confirmed').length}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{services.length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      R$ {appointments
+                        .filter(a => a.status === 'confirmed' && a.service_price)
+                        .reduce((sum, a) => sum + (a.service_price || 0), 0)
+                        .toFixed(2)}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </ConditionalTabsContent>
-        
+
+            {/* Configurações */}
+            <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 px-4 py-4 overflow-auto">
+              <div className="space-y-6">
+                <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
+                <VisualSettingsForm establishment={establishment} onUpdate={updateEstablishment} />
+              </div>
+            </ConditionalTabsContent>
           </div>
-          {/* end content main */}
+
         </Tabs>
       </div>
     </div>
