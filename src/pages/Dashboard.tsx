@@ -12,11 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
-
-interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; }
+interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; };
 // Componente para renderização condicional do conteúdo das tabs
-
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
