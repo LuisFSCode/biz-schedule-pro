@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2, LayoutDashboard, BriefcaseBusiness, PanelLeftClose, PanelRightClose, Settings2 } from "lucide-react";
+import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2, LayoutDashboard, BriefcaseBusiness, PanelLeftClose, PanelRightClose, Settings2, Cable } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
 
 interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; }
-
+interface tabsP { tabValue: string; valueT: string; className?: string; children?: React.ReactNode; }
 // Componente para renderização condicional do conteúdo das tabs
 
 
@@ -37,6 +37,8 @@ const Dashboard = () => {
       </TabsContent>
     );
   };
+
+  const [settingsTab, setSettingsTab] = useState("ConfigSite");
 
   useEffect(() => {
     checkAuth();
@@ -264,13 +266,26 @@ const Dashboard = () => {
                   </div>
                 }
               </TabsTrigger>
+              <TabsTrigger value="analytics" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <Cable className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Integrações</p>
+                  </div> 
+                    
+                ) : 
+                <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                      <Cable className={'w-6 h-6'}/>
+                  </div>
+                }
+              </TabsTrigger>
 
-              <TabsTrigger value="settings" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+              <TabsTrigger value="settings" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-10 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
                   {sidebarOpen ? (
                   
                     <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
                       <Settings className={`w-6 h-6`}/>
-                      <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Conta</p>
+                      <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} flex text-wrap leading-4 text-left`}>Configurações</p>
                     </div> 
                     
                 ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
@@ -427,9 +442,14 @@ const Dashboard = () => {
 
             {/* Configurações */}
             <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 absolute w-full h-full">
-                <div className="space-y-6 w-full h-full">
-                  <SettingsForm establishment={establishment} onUpdate={updateEstablishment} />
-                </div>
+              <div className="space-y-6 w-full h-full">
+                <SettingsForm
+                  establishment={establishment}
+                  onUpdate={updateEstablishment}
+                  tabValue={settingsTab}
+                  setTabValue={setSettingsTab}
+                />
+              </div>
             </ConditionalTabsContent>
         
           </div>
@@ -439,7 +459,6 @@ const Dashboard = () => {
     </div>
   );
 };
-
 
 
 const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
@@ -530,7 +549,7 @@ const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
   );
 };
 
-const SettingsForm = ({ establishment, onUpdate }: any) => {
+const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) => {
   const [formData, setFormData] = useState({
     // Dados do estabelecimento
     name: establishment?.name || '',
@@ -550,37 +569,50 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
     footer_text: establishment?.footer_text || 'Desenvolvido com SchedulePro',
   });
 
+  // Add state for tab value
+  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onUpdate(formData);
   };
   
-
+  
+  console.log('settings montado');
   return (
     <div className="h-full">
-    
       <div className="flex h-full w-full ">
-        <Tabs defaultValue="ConfigSite" className="flex flex-col w-full h-full ">
+        <Tabs value={tabValue} onValueChange={setTabValue} className="flex flex-col w-full h-full ">
           <div className='transition-all duration-400 ease-in-out '>
             <TabsList className="rounded-none px-4 flex gap-5">
+              
+              <TabsTrigger value="*" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
+                <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
+                  <Calendar className={`w-6 h-6`}/>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Config. De Conta</p>
+                </div> 
+              </TabsTrigger>
+
               <TabsTrigger value="AcountConfig" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
                 <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
                   <Calendar className={`w-6 h-6`}/>
-                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações Da Conta</p>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Config. de Negócio</p>
                 </div> 
               </TabsTrigger>
+
+
 
               <TabsTrigger value="ConfigSite" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
                 <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
                   <Calendar className={`w-6 h-6`}/>
-                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações Do Site</p>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Config. De Site</p>
                 </div> 
               </TabsTrigger>
 
               <TabsTrigger value="VisualSettingForm" className={`border transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center cursor-pointer text-sm font-medium`}>   
                 <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-2`}>
                   <Calendar className={`w-6 h-6`}/>
-                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configurações extras</p>
+                  <p className={`transition-all duration-1000 flex items-center justify-center`}>Configs. Extras</p>
                 </div> 
               </TabsTrigger>
 
@@ -746,7 +778,7 @@ const SettingsForm = ({ establishment, onUpdate }: any) => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value='VisualSettingForm' className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto"> 
+              <TabsContent value="VisualSettingForm" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto"> 
                 <VisualSettingsForm establishment={establishment} onUpdate={onUpdate} />
               </TabsContent>
             </div>
