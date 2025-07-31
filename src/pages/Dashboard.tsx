@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2, LayoutDashboard, BriefcaseBusiness, PanelLeftClose, PanelRightClose, Settings2, Cable } from "lucide-react";
+import { Calendar, Settings, Users, BarChart3, LogOut, Plus, Edit, Trash2, LayoutDashboard, BriefcaseBusiness, PanelLeftClose, PanelRightClose, Settings2, Cable, DeleteIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -13,20 +13,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { VisualSettingsForm } from "@/components/VisualSettingsForm";
 
 interface tabsProps { activeTab: string; value: string; className?: string; children?: React.ReactNode; };
-// Componente para renderização condicional do conteúdo das tabs
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [establishment, setEstablishment] = useState<any>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
-  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [integrations, setIntegrations] = useState<any[]>([]);
-
+  const [establishment, setEstablishment] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [appointments, setAppointments] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("appointments");
+  const [services, setServices] = useState<any[]>([]);
+  const [settingsTab, setSettingsTab] = useState("ConfigSite");
+  const [integrations, setIntegrations] = useState<any[]>([]);
+  const [showIntegrationSelector, setShowIntegrationSelector] = useState(false);
+  
+  const integrationOptions = [
+    { id: 'n8n', name: 'n8n' },
+    { id: 'typebot', name: 'Typebot' },
+    { id: 'evolution-api', name: 'Evolution API' },
+  ];
+
+  const [integrationWarning, setIntegrationWarning] = useState<string | null>(null);
+  const [integrationToAdd, setIntegrationToAdd] = useState<string | null>(null);
+
   const ConditionalTabsContent = ({ activeTab, value, className, children }: tabsProps) => {
     return (
       <TabsContent value={value} className={className}>
@@ -34,8 +43,6 @@ const Dashboard = () => {
       </TabsContent>
     );
   };
-
-  const [settingsTab, setSettingsTab] = useState("ConfigSite");
 
   useEffect(() => {
     checkAuth();
@@ -173,14 +180,6 @@ const Dashboard = () => {
   //   setIntegrations(updateIntegrations);
   // }
 
-  const [showIntegrationSelector, setShowIntegrationSelector] = useState(false);
-  const integrationOptions = [
-    { id: 'n8n', name: 'n8n' },
-    { id: 'typebot', name: 'Typebot' },
-    { id: 'evolution-api', name: 'Evolution API' },
-  ];
-  const [integrationWarning, setIntegrationWarning] = useState<string | null>(null);
-  const [integrationToAdd, setIntegrationToAdd] = useState<string | null>(null);
 
   const updateIntegration = (integrationId: string, updates: any) => {
     const updatedIntegrations = integrations.map(integration =>
@@ -189,6 +188,12 @@ const Dashboard = () => {
     setIntegrations(updatedIntegrations);
     // Optionally, persist to backend here if needed
   };
+
+  const deleteIntegration = (integrationId: string) => {
+    const filterIntegrations = integrations.filter(
+      (integration) => integration.id !== integrationId);
+      setIntegrations(filterIntegrations);
+  }
 
   const updateEstablishment = async (updates: any) => {
     const { error } = await supabase
@@ -230,7 +235,6 @@ const Dashboard = () => {
       credentials: {},
       created_at: Date.now().toString(),
     };
-    console.log( 'botão clicado?');
     setIntegrations(prev => [...prev, newIntegration]);
   }
 
@@ -570,7 +574,7 @@ const Dashboard = () => {
                             key={integration.id} 
                             integration={integration} 
                             onUpdate={updateIntegration}
-                            
+                            onDelete={deleteIntegration}
                           />
                         ))}
                       </div>
@@ -690,15 +694,16 @@ const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
   );
 };
 
-const IntegrationCard = ({ integration, onUpdate }: any) => {
+const IntegrationCard = ({ integration, onUpdate, onDelete }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(integration);
-
+  const [isDeleteIntegration, setIsDeleteIntegration] = useState(false);
   const handleSave = () => {
     onUpdate(integration.id, editData);
     setIsEditing(false);
   };
 
+  // Renderização condicional do cartão de integração quando clicado em editar integração
   if (isEditing) {
     return (
       <Card>
@@ -722,27 +727,49 @@ const IntegrationCard = ({ integration, onUpdate }: any) => {
       </Card>
     );
   }
+  // fim da renderização condicional do cartão de integração quando editado
 
+   // Renderização condicional do card de confirmação de exclusão
+  if (isDeleteIntegration) {
+    return (
+      <Card className=" w-full flex items-center justify-center ">
+        <CardContent className="py-1 px-2 w-full justify-between flex">
+          <div className=" flex items-center ">
+            <p className="text-red-600 md:text-xl md:font-semibold">Deseja deletar a integração {integration.name} ?</p>
+          </div>
+          <div className="p-0 h-full flex flex-col md:flex-row justify-center items-center gap-2">
+            <Button className="w-full" onClick={() => onDelete(integration.id)}>Sim</Button>
+            <Button variant="outline" onClick={() => setIsDeleteIntegration(false)}>Cancelar</Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Renderização do cartão de integração quando esta sendo exibido para o usuario
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-semibold">{integration.name}</h3>
-           123
-            {integration.description && (
-              <p className="text-sm text-muted-foreground mt-2">{integration.description}</p>
-            )}
+        <div className="flex gap-3 justify-between items-center ">
+          <div className="flex-1 items-center justify-center">
+            <h3 className="font-semibold items-center justify-center">{integration.name}</h3>
           </div>
-          <div className="flex gap-2">
+          <div className=" w-full flex flex-1 gap-1 items-end justify-end">
+            <Button size="sm" variant="outline" >
+              <Settings className="w-4 h-4" />
+            </Button>
             <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
               <Edit className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setIsDeleteIntegration(true)}>
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
   );
+  // fim da renderização do cartão de integração quando exibido para o usuario
 };
 
 const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) => {
