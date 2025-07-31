@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [integrations, setIntegrations] = useState<any[]>([]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -107,7 +108,7 @@ const Dashboard = () => {
 
     const updatedServices = [...services, newService];
     setServices(updatedServices);
-
+    
     const { error } = await supabase
       .from('establishments')
       .update({ services: updatedServices })
@@ -160,6 +161,35 @@ const Dashboard = () => {
     }
   };
 
+  // const addIntegrations = async () => {
+  //   const newIntegration = {
+  //     id: Date.now().toString(),
+  //     name: 'Nova Integração',
+  //     isActive: false,
+  //     credentials: {},
+  //     created_at: Date.now().toString(),
+  //   };
+  //   const updateIntegrations = [...integrations, newIntegration];
+  //   setIntegrations(updateIntegrations);
+  // }
+
+  const [showIntegrationSelector, setShowIntegrationSelector] = useState(false);
+  const integrationOptions = [
+    { id: 'n8n', name: 'n8n' },
+    { id: 'typebot', name: 'Typebot' },
+    { id: 'evolution-api', name: 'Evolution API' },
+  ];
+  const [integrationWarning, setIntegrationWarning] = useState<string | null>(null);
+  const [integrationToAdd, setIntegrationToAdd] = useState<string | null>(null);
+
+  const updateIntegration = (integrationId: string, updates: any) => {
+    const updatedIntegrations = integrations.map(integration =>
+      integration.id === integrationId ? { ...integration, ...updates } : integration
+    );
+    setIntegrations(updatedIntegrations);
+    // Optionally, persist to backend here if needed
+  };
+
   const updateEstablishment = async (updates: any) => {
     const { error } = await supabase
       .from('establishments')
@@ -192,8 +222,81 @@ const Dashboard = () => {
     );
   }
 
+  function addIntegrationByName(name: string, isCopy = false) {
+    const newIntegration = {
+      id: Date.now().toString() + (isCopy ? '-copy' : ''),
+      name,
+      isActive: false,
+      credentials: {},
+      created_at: Date.now().toString(),
+    };
+    console.log( 'botão clicado?');
+    setIntegrations(prev => [...prev, newIntegration]);
+  }
+
+  
   return (
     <div className=" overflow-hidden h-screen flex flex-col bg-gradient-to-b from-primary/5 to-background">
+      
+      {showIntegrationSelector && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Escolha uma integração</h3>
+            <div className="space-y-2">
+              {integrationOptions.map(opt => {
+                const alreadyExists = integrations.some(i => i.name === opt.name);
+                return (
+                  <div key={opt.id} className="flex items-center justify-between border rounded p-2">
+                    <span>{opt.name}</span>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        if (alreadyExists) {
+                          setIntegrationWarning(opt.name);
+                          setIntegrationToAdd(opt.name);
+                        } else {
+                          addIntegrationByName(opt.name);
+                          setShowIntegrationSelector(false);
+                        }
+                      }}
+                    >
+                      {alreadyExists ? 'Adicionar Cópia' : 'Adicionar'}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+            <Button className="mt-4 w-full" variant="secondary" onClick={() => setShowIntegrationSelector(false)}>
+              Cancelar
+            </Button>
+            {integrationWarning && (
+              <div className="mt-4 p-2 bg-yellow-100 text-yellow-800 rounded">
+                {integrationWarning} já está em uso, deseja adicionar uma cópia?
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      addIntegrationByName(integrationToAdd, true);
+                      setIntegrationWarning(null);
+                      setShowIntegrationSelector(false);
+                    }}
+                  >
+                    Sim
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIntegrationWarning(null)}
+                  >
+                    Não
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -229,8 +332,9 @@ const Dashboard = () => {
                     <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Agendamentos</p>
                   </div> 
                     
-                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-0 w-6 h-6`}>
-                      <Calendar className={`w-6 h-6 items-center`}/>
+                ) : 
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center justify-center gap-0 w-6 h-6`}>
+                    <Calendar className={`w-6 h-6 items-center`}/>
                   </div> 
                 }
               </TabsTrigger>
@@ -243,8 +347,9 @@ const Dashboard = () => {
                     <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Serviços</p>
                   </div> 
                     
-                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                      <BriefcaseBusiness className={'w-6 h-6'}/>
+                ) : 
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <BriefcaseBusiness className={'w-6 h-6'}/>
                   </div>
                 }
               </TabsTrigger>
@@ -257,12 +362,12 @@ const Dashboard = () => {
                   </div> 
                     
                 ) : 
-                <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                      <BarChart3 className={'w-6 h-6'}/>
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <BarChart3 className={'w-6 h-6'}/>
                   </div>
                 }
               </TabsTrigger>
-              <TabsTrigger value="analytics" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+              <TabsTrigger value="integrations" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
                 {sidebarOpen ? (
                   <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
                     <Cable className={`w-6 h-6`}/>
@@ -270,22 +375,23 @@ const Dashboard = () => {
                   </div> 
                     
                 ) : 
-                <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                      <Cable className={'w-6 h-6'}/>
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <Cable className={'w-6 h-6'}/>
                   </div>
                 }
               </TabsTrigger>
 
               <TabsTrigger value="settings" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-10 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
-                  {sidebarOpen ? (
+                {sidebarOpen ? (
+                
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <Settings className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} flex text-wrap leading-4 text-left`}>Configurações</p>
+                  </div> 
                   
-                    <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                      <Settings className={`w-6 h-6`}/>
-                      <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} flex text-wrap leading-4 text-left`}>Configurações</p>
-                    </div> 
-                    
-                ) : <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
-                      <Settings className={'w-6 h-6'}/>
+                ) : 
+                  <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <Settings className={'w-6 h-6'}/>
                   </div>}
               </TabsTrigger>
               
@@ -392,49 +498,88 @@ const Dashboard = () => {
 
             {/* Relatórios */}
             <ConditionalTabsContent value="analytics" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
-                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">{appointments.length}</div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">
-                                {appointments.filter(a => a.status === 'confirmed').length}
-                              </div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">{services.length}</div>
-                            </CardContent>
-                          </Card>
-                          <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="text-2xl font-bold">
-                                R$ {appointments
-                                  .filter(a => a.status === 'confirmed' && a.service_price)
-                                  .reduce((sum, a) => sum + (a.service_price || 0), 0)
-                                  .toFixed(2)}
-                              </div>
-                            </CardContent>
-                          </Card>
-                      </div> 
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{appointments.length}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Agendamentos Confirmados</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {appointments.filter(a => a.status === 'confirmed').length}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{services.length}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        R$ {appointments
+                          .filter(a => a.status === 'confirmed' && a.service_price)
+                          .reduce((sum, a) => sum + (a.service_price || 0), 0)
+                          .toFixed(2)}
+                      </div>
+                    </CardContent>
+                  </Card>
+              </div> 
             </ConditionalTabsContent>
             
+            {/* Integrations */}
+            <ConditionalTabsContent value='integrations' activeTab={activeTab} className="border border-red-600 flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+              <div>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle>Integre Apps e Sistemas</CardTitle>
+                      <CardDescription>
+                        Adicione Suas automações e Sistemas
+                      </CardDescription>
+                    </div>
+                    <Button onClick={() =>  setShowIntegrationSelector(true)}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar Integração
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    {integrations.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Cable className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">Nenhuma integração adicionada</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {integrations.map((integration) => (
+                          <IntegrationCard 
+                            key={integration.id} 
+                            integration={integration} 
+                            onUpdate={updateIntegration}
+                            
+                          />
+                        ))}
+                      </div>
+                    )}
+                    
+                  </CardContent>
+                </Card>
+              </div>
+            </ConditionalTabsContent>
 
             {/* Configurações */}
             <ConditionalTabsContent value="settings" activeTab={activeTab} className="flex-1 absolute w-full h-full">
@@ -545,6 +690,61 @@ const ServiceCard = ({ service, onUpdate, onDelete }: any) => {
   );
 };
 
+const IntegrationCard = ({ integration, onUpdate }: any) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState(integration);
+
+  const handleSave = () => {
+    onUpdate(integration.id, editData);
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Nome da integração</Label>
+              <Input
+                id="name"
+                value={editData.name}
+                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Button onClick={handleSave}>Salvar</Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold">{integration.name}</h3>
+           123
+            {integration.description && (
+              <p className="text-sm text-muted-foreground mt-2">{integration.description}</p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
+              <Edit className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) => {
   const [formData, setFormData] = useState({
     // Dados do estabelecimento
@@ -565,16 +765,11 @@ const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) 
     footer_text: establishment?.footer_text || 'Desenvolvido com SchedulePro',
   });
 
-  // Add state for tab value
-  
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdate(formData);
+    onUpdate({formData});
   };
   
-  
-  console.log('settings montado');
   return (
     <div className="h-full">
       <div className="flex h-full w-full ">
@@ -689,90 +884,94 @@ const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) 
                   </CardContent>
                 </Card>
               </TabsContent>
+              <form onSubmit={handleSubmit}>
+                <TabsContent value="ConfigSite" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto">
+                  <Card>
+                    <CardHeader>
+                      <h3 className="text-lg font-semibold">Personalização da Landing Page</h3>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="favicon_url">Favicon (URL)</Label>
+                          <Input
+                            id="favicon_url"
+                            placeholder="https://exemplo.com/favicon.png"
+                            value={formData.favicon_url}
+                            onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">Ícone que aparece na aba do navegador</p>
+                        </div>
+                        <div>
+                          <Label htmlFor="logo_url">Logo (URL)</Label>
+                          <Input
+                            id="logo_url"
+                            placeholder="https://exemplo.com/logo.png"
+                            value={formData.logo_url}
+                            onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">Logo que aparece no header</p>
+                        </div>
+                      </div>
 
-              <TabsContent value="ConfigSite" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto">
-                <Card>
-                  <CardHeader>
-                        <h3 className="text-lg font-semibold">Personalização da Landing Page</h3>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="favicon_url">Favicon (URL)</Label>
-                              <Input
-                                id="favicon_url"
-                                placeholder="https://exemplo.com/favicon.png"
-                                value={formData.favicon_url}
-                                onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
-                              />
-                              <p className="text-xs text-muted-foreground mt-1">Ícone que aparece na aba do navegador</p>
-                            </div>
-                            <div>
-                              <Label htmlFor="logo_url">Logo (URL)</Label>
-                              <Input
-                                id="logo_url"
-                                placeholder="https://exemplo.com/logo.png"
-                                value={formData.logo_url}
-                                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                              />
-                              <p className="text-xs text-muted-foreground mt-1">Logo que aparece no header</p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <Label htmlFor="color_primary">Cor Principal</Label>
-                            <Input
-                              id="color_primary"
-                              type="color"
-                              value={formData.color_primary}
-                              onChange={(e) => setFormData({ ...formData, color_primary: e.target.value })}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">Cor principal do tema da landing page</p>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="hero_image_url">Imagem do Hero (URL)</Label>
-                            <Input
-                              id="hero_image_url"
-                              placeholder="https://exemplo.com/hero-image.jpg"
-                              value={formData.hero_image_url}
-                              onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">Imagem de fundo da seção principal</p>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="hero_title">Título Principal</Label>
-                            <Input
-                              id="hero_title"
-                              value={formData.hero_title}
-                              onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">Título que aparece na seção hero</p>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="hero_description">Descrição Principal</Label>
-                            <Textarea
-                              id="hero_description"
-                              value={formData.hero_description}
-                              onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">Descrição que aparece abaixo do título</p>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="footer_text">Texto do Rodapé</Label>
-                            <Input
-                              id="footer_text"
-                              value={formData.footer_text}
-                              onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">Texto que aparece no rodapé da página</p>
-                          </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                      <div>
+                        <Label htmlFor="color_primary">Cor Principal</Label>
+                        <Input
+                          id="color_primary"
+                          type="color"
+                          value={formData.color_primary}
+                          onChange={(e) => setFormData({ ...formData, color_primary: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Cor principal do tema da landing page</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="hero_image_url">Imagem do Hero (URL)</Label>
+                        <Input
+                          id="hero_image_url"
+                          placeholder="https://exemplo.com/hero-image.jpg"
+                          value={formData.hero_image_url}
+                          onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Imagem de fundo da seção principal</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="hero_title">Título Principal</Label>
+                        <Input
+                          id="hero_title"
+                          value={formData.hero_title}
+                          onChange={(e) => setFormData({ ...formData, hero_title: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Título que aparece na seção hero</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="hero_description">Descrição Principal</Label>
+                        <Textarea
+                          id="hero_description"
+                          value={formData.hero_description}
+                          onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Descrição que aparece abaixo do título</p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="footer_text">Texto do Rodapé</Label>
+                        <Input
+                          id="footer_text"
+                          value={formData.footer_text}
+                          onChange={(e) => setFormData({ ...formData, footer_text: e.target.value })}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Texto que aparece no rodapé da página</p>
+                      </div>
+                      <Button type="submit" className="w-full">
+                        Salvar Configurações
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </form>
 
               <TabsContent value="VisualSettingForm" className="flex-1 absolute px-4 py-4 w-full h-full overflow-auto"> 
                 <VisualSettingsForm establishment={establishment} onUpdate={onUpdate} />
@@ -785,5 +984,7 @@ const SettingsForm = ({ establishment, onUpdate,  tabValue, setTabValue }: any) 
     </div>
   );
 };
+
+
 
 export default Dashboard;
