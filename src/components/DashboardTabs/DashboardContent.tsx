@@ -1,12 +1,13 @@
 import { useIntegrations } from "@/context/IntegrationsContext";
 import AppointmentsTab from "@/components/DashboardTabs/AppointmentsTab";
 import ServicesTab from "@/components/DashboardTabs/ServicesTab";
+import ProfessionalsTab from "@/components/DashboardTabs/ProfessionalsTab";
 import IntegrationsTab from "@/components/DashboardTabs/IntegrationsTab";
 // import SettingsForm from "@/components/SettingsForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Settings, Users, BarChart3, LogOut, BriefcaseBusiness, Cable, PanelLeftClose, PanelRightClose } from "lucide-react";
+import { Calendar, Settings, Users, UserCheck, BarChart3, LogOut, BriefcaseBusiness, Cable, PanelLeftClose, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 import { CardDescription } from "../ui/card";
 import { Label } from "../ui/label";
@@ -185,6 +186,20 @@ export default function DashboardContent(props) {
                 }
                 </TabsTrigger>
 
+                <TabsTrigger value="professionals" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
+                {sidebarOpen ? (
+                    <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <UserCheck className={`w-6 h-6`}/>
+                    <p className={`transition-all duration-1000 flex items-center justify-center ${sidebarOpen ? 'opacity-100' : 'opacity-0'} `}>Profissionais</p>
+                    </div> 
+                    
+                ) : 
+                    <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
+                    <UserCheck className={'w-6 h-6'}/>
+                    </div>
+                }
+                </TabsTrigger>
+
                 <TabsTrigger value="analytics" className={`transition-all duration-1000 ease-in-out w-full min-w-6 h-8 flex items-center ${sidebarOpen ?  'justify-start' : 'justify-center'} cursor-pointer text-sm font-medium`}>   
                 {sidebarOpen ? (
                     <div className={`transition-all duration-1000 ease-in-out flex items-center gap-2`}>
@@ -239,6 +254,11 @@ export default function DashboardContent(props) {
                 {/* Serviços */}
                 <ConditionalTabsContent value="services" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
                     <ServicesTab />
+                </ConditionalTabsContent>
+
+                {/* Profissionais */}
+                <ConditionalTabsContent value="professionals" activeTab={activeTab} className=" flex-1 px-4 py-4 h-full absolute w-full overflow-auto">
+                    <ProfessionalsTab />
                 </ConditionalTabsContent>
 
                 {/* Relatórios */}
