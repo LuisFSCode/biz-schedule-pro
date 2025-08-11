@@ -10,13 +10,11 @@ export function DashboardState(){
   const [appointments, setAppointments] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("appointments");
   const [services, setServices] = useState<any[]>([]);
-  const [settingsTab, setSettingsTab] = useState("ConfigSite");
+  const [settingsTab, setSettingsTab] = useState("AcountConfig");
   const [establishment, setEstablishment] = useState<any>(null);
   const { toast } = useToast();
 
   const navigate = useNavigate();
-
-  
 
   useEffect(() => {
     checkAuth();
@@ -78,6 +76,27 @@ export function DashboardState(){
     }
   };
 
+  const updateEstablishment = async (updates: any) => {
+    const { error } = await supabase
+      .from('establishments')
+      .update(updates)
+      .eq('id', establishment.id);
+
+    if (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao atualizar estabelecimento",
+        variant: "destructive"
+      });
+    } else {
+      setEstablishment({ ...establishment, ...updates });
+      toast({
+        title: "Sucesso",
+        description: "Configurações salvas com sucesso!"
+      });
+    }
+  };
+
   useEffect(() => {
     loadEstablishmentData();
   }, []);
@@ -91,7 +110,8 @@ export function DashboardState(){
     establishment, setEstablishment,
     appointments, setAppointments,
     settingsTab, setSettingsTab,
-    handleLogout
+    handleLogout,
+    updateEstablishment
   };
 
 

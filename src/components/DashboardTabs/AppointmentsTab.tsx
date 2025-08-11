@@ -6,8 +6,7 @@ export default function AppointmentsTab() {
   const { appointments } = DashboardState();
 
   return (
-    <div>
-      <Card>
+      <Card className='flex flex-col w-full h-full overflow-auto '>
         <CardHeader>
         <CardTitle>Próximos Agendamentos</CardTitle>
         <CardDescription>
@@ -61,6 +60,6 @@ export default function AppointmentsTab() {
         )}
         </CardContent>
       </Card>
-    </div>
+
   )
 }

@@ -9,7 +9,7 @@ import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
-import { useDashboard } from "@/hooks/DashboardHooks/DashboardContext";
+import { useDashboard } from "@/context/DashboardContext";
 
 export default function ServicesTab() {
   const {services, setServices, establishment} = useDashboard();
