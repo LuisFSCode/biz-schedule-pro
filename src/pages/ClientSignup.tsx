@@ -30,13 +30,34 @@ const ClientSignup = () => {
     
     setIsLoading(true);
     try {
-      // Customer signup logic here
-      toast({
-        title: "Sucesso!",
-        description: "Conta criada com sucesso!"
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/${slug}`,
+          data: {
+            full_name: formData.name,
+            phone: formData.phone
+          }
+        }
       });
-      
-      navigate(`/${slug}/agenda`);
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast({
+          title: "Sucesso!",
+          description: "Conta criada com sucesso!"
+        });
+
+        // Check for pending booking
+        const pendingBooking = localStorage.getItem('pendingBooking');
+        if (pendingBooking) {
+          navigate(`/${slug}/agendar`);
+        } else {
+          navigate(`/${slug}/meus-agendamentos`);
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Erro",

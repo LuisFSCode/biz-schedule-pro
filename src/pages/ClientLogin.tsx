@@ -28,13 +28,26 @@ const ClientLogin = () => {
     
     setIsLoading(true);
     try {
-      // Login customer logic here
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Sucesso!",
         description: "Login realizado com sucesso!"
       });
-      
-      navigate(`/${slug}/agenda`);
+
+      // Check for pending booking
+      const pendingBooking = localStorage.getItem('pendingBooking');
+      if (pendingBooking) {
+        localStorage.removeItem('pendingBooking');
+        navigate(`/${slug}/agendar`);
+      } else {
+        navigate(`/${slug}/meus-agendamentos`);
+      }
     } catch (error: any) {
       toast({
         title: "Erro",

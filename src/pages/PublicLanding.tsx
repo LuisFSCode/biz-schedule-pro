@@ -190,7 +190,7 @@ const PublicLanding = () => {
 							<Link to={`/${slug}/login-cliente`}>Entrar</Link>
 						</Button>
 						<Button asChild>
-							<Link to={`/${slug}/cadastro-cliente`}>Agendar</Link>
+							<Link to={`/${slug}/agendar`}>Agendar</Link>
 						</Button>
 					</div>
 				</div>
@@ -227,7 +227,7 @@ const PublicLanding = () => {
 							"Agende seus serviços de forma rápida e fácil"}
 					</p>
 					<Button size="lg" variant="secondary" asChild>
-						<Link to={`/${slug}/cadastro-cliente`}>Agendar Agora</Link>
+						<Link to={`/${slug}/agendar`}>Agendar Agora</Link>
 					</Button>
 				</div>
 			</section>

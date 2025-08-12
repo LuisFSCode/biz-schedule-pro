@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import PublicLanding from "./pages/PublicLanding";
 import ClientLogin from "./pages/ClientLogin";
 import ClientSignup from "./pages/ClientSignup";
+import ClientBooking from "./pages/ClientBooking";
+import ClientAppointments from "./pages/ClientAppointments";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/:slug/login-cliente" element={<ClientLogin />} />
           <Route path="/:slug/cadastro-cliente" element={<ClientSignup />} />
+          <Route path="/:slug/agendar" element={<ClientBooking />} />
+          <Route path="/:slug/meus-agendamentos" element={<ClientAppointments />} />
           <Route path="/:slug" element={<PublicLanding />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

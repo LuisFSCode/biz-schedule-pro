@@ -153,23 +153,11 @@ export default function SmartBookingFlow({
         appointment_date: format(selectedDate, 'yyyy-MM-dd'),
         appointment_time: selectedTime,
         status: 'pending',
-        customer_id: 'temp-customer-id' // This should come from customer auth
+        customer_id: null // Will be set by parent component
       };
 
-      const { data, error } = await supabase
-        .from('appointments' as any)
-        .insert([bookingData])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso!",
-        description: "Agendamento realizado com sucesso!"
-      });
-
-      onBookingComplete?.(data);
+      // Pass booking data to parent for authentication handling
+      onBookingComplete?.(bookingData);
       
       // Reset form
       setCurrentStep(1);
