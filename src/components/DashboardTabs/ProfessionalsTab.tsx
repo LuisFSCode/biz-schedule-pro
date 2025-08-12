@@ -78,7 +78,6 @@ export default function ProfessionalsTab() {
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-4">
                       <Avatar>
-                        <AvatarImage src={professional.avatar_url} />
                         <AvatarFallback>
                           {professional.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                         </AvatarFallback>
@@ -117,8 +116,8 @@ export default function ProfessionalsTab() {
                           )}
                           
                           <div className="flex items-center space-x-2">
-                            <Badge variant={professional.is_active ? "default" : "secondary"}>
-                              {professional.is_active ? "Ativo" : "Inativo"}
+                            <Badge variant="default">
+                              Ativo
                             </Badge>
                             <Badge variant="outline">
                               {professional.serves_all_services ? "Todos serviços" : "Serviços específicos"}
@@ -127,7 +126,7 @@ export default function ProfessionalsTab() {
                           
                           <div className="text-xs text-muted-foreground">
                             <Clock className="w-3 h-3 inline mr-1" />
-                            {professional.work_hours_start} às {professional.work_hours_end}
+                            {professional.default_start_time} às {professional.default_end_time}
                           </div>
                         </div>
                       </div>
@@ -189,10 +188,9 @@ function CreateProfessionalForm({ onSuccess, createProfessional }: any) {
     name: '',
     email: '',
     phone: '',
-    work_hours_start: '09:00',
-    work_hours_end: '18:00',
-    serves_all_services: true,
-    is_active: true
+    default_start_time: '09:00:00',
+    default_end_time: '18:00:00',
+    serves_all_services: true
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -243,8 +241,8 @@ function CreateProfessionalForm({ onSuccess, createProfessional }: any) {
           <Input
             id="start_time"
             type="time"
-            value={formData.work_hours_start}
-            onChange={(e) => setFormData({ ...formData, work_hours_start: e.target.value })}
+            value={formData.default_start_time}
+            onChange={(e) => setFormData({ ...formData, default_start_time: e.target.value })}
           />
         </div>
         <div>
@@ -252,8 +250,8 @@ function CreateProfessionalForm({ onSuccess, createProfessional }: any) {
           <Input
             id="end_time"
             type="time"
-            value={formData.work_hours_end}
-            onChange={(e) => setFormData({ ...formData, work_hours_end: e.target.value })}
+            value={formData.default_end_time}
+            onChange={(e) => setFormData({ ...formData, default_end_time: e.target.value })}
           />
         </div>
       </div>
@@ -267,14 +265,6 @@ function CreateProfessionalForm({ onSuccess, createProfessional }: any) {
         <Label htmlFor="serves_all">Atende todos os serviços</Label>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is_active"
-          checked={formData.is_active}
-          onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
-        />
-        <Label htmlFor="is_active">Profissional ativo</Label>
-      </div>
       
       <div className="flex justify-end space-x-2">
         <Button type="submit">Criar Profissional</Button>
@@ -289,10 +279,9 @@ function EditProfessionalForm({ professional, onSuccess, updateProfessional }: a
     name: professional.name,
     email: professional.email || '',
     phone: professional.phone || '',
-    work_hours_start: professional.work_hours_start,
-    work_hours_end: professional.work_hours_end,
-    serves_all_services: professional.serves_all_services,
-    is_active: professional.is_active
+    default_start_time: professional.default_start_time,
+    default_end_time: professional.default_end_time,
+    serves_all_services: professional.serves_all_services
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -343,8 +332,8 @@ function EditProfessionalForm({ professional, onSuccess, updateProfessional }: a
           <Input
             id="start_time"
             type="time"
-            value={formData.work_hours_start}
-            onChange={(e) => setFormData({ ...formData, work_hours_start: e.target.value })}
+            value={formData.default_start_time}
+            onChange={(e) => setFormData({ ...formData, default_start_time: e.target.value })}
           />
         </div>
         <div>
@@ -352,8 +341,8 @@ function EditProfessionalForm({ professional, onSuccess, updateProfessional }: a
           <Input
             id="end_time"
             type="time"
-            value={formData.work_hours_end}
-            onChange={(e) => setFormData({ ...formData, work_hours_end: e.target.value })}
+            value={formData.default_end_time}
+            onChange={(e) => setFormData({ ...formData, default_end_time: e.target.value })}
           />
         </div>
       </div>
@@ -367,14 +356,6 @@ function EditProfessionalForm({ professional, onSuccess, updateProfessional }: a
         <Label htmlFor="serves_all">Atende todos os serviços</Label>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is_active"
-          checked={formData.is_active}
-          onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
-        />
-        <Label htmlFor="is_active">Profissional ativo</Label>
-      </div>
       
       <div className="flex justify-end space-x-2">
         <Button type="submit">Salvar Alterações</Button>

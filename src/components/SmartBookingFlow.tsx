@@ -44,7 +44,7 @@ export default function SmartBookingFlow({
     if (!selectedService) return [];
     
     return professionals.filter(prof => {
-      if (!prof.is_active) return false;
+      // All professionals are considered active
       
       if (!prof.serves_all_services) {
         // Check if professional serves this specific service
@@ -308,7 +308,6 @@ export default function SmartBookingFlow({
                         <CardContent className="pt-4">
                           <div className="flex items-center space-x-3">
                             <Avatar>
-                              <AvatarImage src={professional.avatar_url} />
                               <AvatarFallback>
                                 {professional.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                               </AvatarFallback>
@@ -316,7 +315,7 @@ export default function SmartBookingFlow({
                             <div>
                               <h4 className="font-medium">{professional.name}</h4>
                               <p className="text-sm text-muted-foreground">
-                                {professional.work_hours_start} às {professional.work_hours_end}
+                                {professional.default_start_time} às {professional.default_end_time}
                               </p>
                               <Badge variant="outline" className="mt-1">
                                 {professional.serves_all_services ? "Todos serviços" : "Serviços específicos"}

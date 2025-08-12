@@ -8,11 +8,9 @@ export interface Professional {
   name: string;
   email?: string;
   phone?: string;
-  avatar_url?: string;
-  is_active: boolean;
   serves_all_services: boolean;
-  work_hours_start: string;
-  work_hours_end: string;
+  default_start_time: string;
+  default_end_time: string;
   created_at: string;
   updated_at: string;
 }
@@ -157,10 +155,9 @@ export const useProfessionals = (establishmentId: string) => {
         .insert([{
           ...data,
           establishment_id: establishmentId,
-          is_active: true,
           serves_all_services: true,
-          work_hours_start: '09:00',
-          work_hours_end: '18:00'
+          default_start_time: '09:00:00',
+          default_end_time: '18:00:00'
         }])
         .select()
         .single();
@@ -378,7 +375,7 @@ export const useProfessionals = (establishmentId: string) => {
   // Get available professionals for service and date/time
   const getAvailableProfessionals = (serviceId: string, date: string, time: string) => {
     return professionals.filter(prof => {
-      if (!prof.is_active) return false;
+      // All professionals are considered active (no is_active field)
 
       // Check if professional serves this service
       if (!prof.serves_all_services) {

@@ -32,14 +32,14 @@ export default function ProfessionalAvailabilityManager({
 
   // State for multiple dates selection
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [multipleStartTime, setMultipleStartTime] = useState(professional.work_hours_start);
-  const [multipleEndTime, setMultipleEndTime] = useState(professional.work_hours_end);
+  const [multipleStartTime, setMultipleStartTime] = useState(professional.default_start_time);
+  const [multipleEndTime, setMultipleEndTime] = useState(professional.default_end_time);
 
   // State for date range selection
   const [rangeStartDate, setRangeStartDate] = useState<Date>();
   const [rangeEndDate, setRangeEndDate] = useState<Date>();
-  const [rangeStartTime, setRangeStartTime] = useState(professional.work_hours_start);
-  const [rangeEndTime, setRangeEndTime] = useState(professional.work_hours_end);
+  const [rangeStartTime, setRangeStartTime] = useState(professional.default_start_time);
+  const [rangeEndTime, setRangeEndTime] = useState(professional.default_end_time);
 
   // State for calendar navigation (6 months from now)
   const [currentMonth, setCurrentMonth] = useState(new Date());
