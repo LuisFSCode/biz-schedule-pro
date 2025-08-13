@@ -182,7 +182,8 @@ export default function SmartBookingFlow({
   const hasAvailability = (date: Date) => {
     if (!selectedProfessional) return false;
     const dateString = format(date, 'yyyy-MM-dd');
-    return !!getProfessionalAvailability(selectedProfessional.id, dateString);
+    const availability = getProfessionalAvailability(selectedProfessional.id, dateString);
+    return !!availability;
   };
 
   const availableProfessionals = getAvailableProfessionalsForService();
@@ -341,13 +342,17 @@ export default function SmartBookingFlow({
                       setSelectedDate(date);
                       setSelectedTime('');
                     }}
-                    disabled={(date) => 
-                      date < new Date() || 
-                      date > addMonths(new Date(), 6) ||
-                      !hasAvailability(date)
-                    }
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const compareDate = new Date(date);
+                      compareDate.setHours(0, 0, 0, 0);
+                      return compareDate < today || 
+                             date > addMonths(new Date(), 6) ||
+                             !hasAvailability(date);
+                    }}
                     locale={ptBR}
-                    className="rounded-md border"
+                    className="rounded-md border pointer-events-auto"
                     modifiers={{
                       available: hasAvailability
                     }}
