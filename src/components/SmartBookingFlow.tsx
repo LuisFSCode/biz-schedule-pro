@@ -180,9 +180,14 @@ export default function SmartBookingFlow({
 
   // Check if date has availability
   const hasAvailability = (date: Date) => {
-    if (!selectedProfessional) return false;
+    if (!selectedProfessional) {
+      console.log('No professional selected');
+      return false;
+    }
     const dateString = format(date, 'yyyy-MM-dd');
     const availability = getProfessionalAvailability(selectedProfessional.id, dateString);
+    console.log(`Checking availability for ${dateString}:`, availability);
+    console.log('All availability data:', availability);
     return !!availability;
   };
 
