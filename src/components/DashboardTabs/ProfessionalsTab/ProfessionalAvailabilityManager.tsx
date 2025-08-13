@@ -143,7 +143,13 @@ export default function ProfessionalAvailabilityManager({
                   mode="single"
                   selected={undefined}
                   onSelect={handleDateSelect}
-                  disabled={(date) => date < new Date() || date > maxDate}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const compareDate = new Date(date);
+                    compareDate.setHours(0, 0, 0, 0);
+                    return compareDate < today || date > maxDate;
+                  }}
                   month={currentMonth}
                   onMonthChange={setCurrentMonth}
                   locale={ptBR}
@@ -247,7 +253,13 @@ export default function ProfessionalAvailabilityManager({
                         mode="single"
                         selected={rangeStartDate}
                         onSelect={setRangeStartDate}
-                        disabled={(date) => date < new Date() || date > maxDate}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const compareDate = new Date(date);
+                          compareDate.setHours(0, 0, 0, 0);
+                          return compareDate < today || date > maxDate;
+                        }}
                         initialFocus
                         locale={ptBR}
                       />
@@ -275,7 +287,13 @@ export default function ProfessionalAvailabilityManager({
                         mode="single"
                         selected={rangeEndDate}
                         onSelect={setRangeEndDate}
-                        disabled={(date) => date < new Date() || date > maxDate || (rangeStartDate && date < rangeStartDate)}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const compareDate = new Date(date);
+                          compareDate.setHours(0, 0, 0, 0);
+                          return compareDate < today || date > maxDate || (rangeStartDate && date < rangeStartDate);
+                        }}
                         initialFocus
                         locale={ptBR}
                       />
