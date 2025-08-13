@@ -365,15 +365,11 @@ export const useProfessionals = (establishmentId: string) => {
 
   // Get professional availability for specific dates
   const getProfessionalAvailability = (professionalId: string, date: string) => {
-    console.log(`getProfessionalAvailability called with: professionalId=${professionalId}, date=${date}`);
-    console.log('Current availability data:', availability);
-    const result = availability.find(a => 
+    return availability.find(a => 
       a.professional_id === professionalId && 
       a.date === date &&
       a.is_available
     );
-    console.log('Found availability:', result);
-    return result;
   };
 
   // Get available professionals for service and date/time

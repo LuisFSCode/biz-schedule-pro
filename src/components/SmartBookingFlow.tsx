@@ -87,11 +87,11 @@ export default function SmartBookingFlow({
     const dateString = format(selectedDate, 'yyyy-MM-dd');
     const availability = getProfessionalAvailability(selectedProfessional.id, dateString);
     
-    if (!availability) return [];
+    // Use professional availability if found, otherwise use default times
+    const startTime = availability?.start_time || selectedProfessional.default_start_time || '09:00';
+    const endTime = availability?.end_time || selectedProfessional.default_end_time || '18:00';
     
     const slots = [];
-    const startTime = availability.start_time;
-    const endTime = availability.end_time;
     const serviceDuration = selectedService.duration || 60;
     
     // Generate 30-minute slots
@@ -115,6 +115,9 @@ export default function SmartBookingFlow({
       // Move to next 30-minute slot
       const nextSlot = addMinutes(currentDate, 30);
       currentTime = format(nextSlot, 'HH:mm');
+      
+      // Safety check to prevent infinite loop
+      if (slots.length > 20) break;
     }
     
     return slots;
@@ -178,17 +181,18 @@ export default function SmartBookingFlow({
     }
   };
 
-  // Check if date has availability
+  // Check if date has availability - simplified logic for now
   const hasAvailability = (date: Date) => {
-    if (!selectedProfessional) {
-      console.log('No professional selected');
-      return false;
-    }
-    const dateString = format(date, 'yyyy-MM-dd');
-    const availability = getProfessionalAvailability(selectedProfessional.id, dateString);
-    console.log(`Checking availability for ${dateString}:`, availability);
-    console.log('All availability data:', availability);
-    return !!availability;
+    if (!selectedProfessional) return false;
+    
+    // For now, allow any future date if professional is selected
+    // This will be refined when we have proper availability data
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    
+    return compareDate >= today;
   };
 
   const availableProfessionals = getAvailableProfessionalsForService();
