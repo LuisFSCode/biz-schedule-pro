@@ -149,12 +149,10 @@ export default function ProfessionalAvailabilityManager({
                   locale={ptBR}
                   className="rounded-md border"
                   modifiers={{
-                    selected: isDateSelected,
-                    available: hasAvailability
+                    selected: isDateSelected
                   }}
                   modifiersStyles={{
-                    selected: { backgroundColor: 'hsl(var(--primary))', color: 'white' },
-                    available: { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+                    selected: { backgroundColor: 'hsl(var(--primary))', color: 'white' }
                   }}
                 />
               </div>
