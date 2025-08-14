@@ -156,8 +156,8 @@ export const useProfessionals = (establishmentId: string) => {
           ...data,
           establishment_id: establishmentId,
           serves_all_services: true,
-          default_start_time: '09:00:00',
-          default_end_time: '18:00:00'
+          // default_start_time: '09:00:00',
+          // default_end_time: '18:00:00'
         }])
         .select()
         .single();

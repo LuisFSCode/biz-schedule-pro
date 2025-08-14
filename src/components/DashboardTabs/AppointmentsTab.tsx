@@ -25,7 +25,7 @@ export default function AppointmentsTab() {
                 <div key={appointment.id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start">
                     <div>
-                    <h3 className="font-semibold">{appointment.service_name}</h3>
+                    <h3 className="font-semibold">{appointment.service_name} 123</h3>
                     <p className="text-sm text-muted-foreground">
                         Cliente: {appointment.customers?.name || 'N/A'}
                     </p>
