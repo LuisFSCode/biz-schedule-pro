@@ -145,7 +145,7 @@ const ClientBooking = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to={`/${slug}`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <ArrowLeft className="w-5 h-5" />
-            <span className="text-xl font-bold">Voltar</span>
+            <span className="text-xl font-bold">Voltar </span>
           </Link>
           {establishment.logo_url ? (
             <img
@@ -156,7 +156,7 @@ const ClientBooking = () => {
           ) : (
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold">
-                {establishment.name?.[0]}
+                {establishment.name?.[0]} 
               </span>
             </div>
           )}

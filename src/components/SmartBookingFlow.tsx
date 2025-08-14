@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar } from '@/components/ui/calendar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, addMonths, isSameDay, parseISO, addMinutes } from 'date-fns';
@@ -13,6 +13,7 @@ import { Clock, User, CheckCircle, AlertTriangle, ArrowLeft, ArrowRight } from '
 import { useProfessionals } from '@/hooks/DashboardHooks/ProfessionalsHooks';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+// import ProfessionalAvailabilityManager from './DashboardTabs/ProfessionalsTab/ProfessionalAvailabilityManager';
 
 interface SmartBookingFlowProps {
   establishmentId: string;
@@ -234,7 +235,7 @@ export default function SmartBookingFlow({
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      Nenhum serviço cadastrado. Configure os serviços primeiro.
+                      Esse Estabelecimento não Possui Serviços Disponiveis no Momento.
                     </AlertDescription>
                   </Alert>
                 ) : (
@@ -312,9 +313,8 @@ export default function SmartBookingFlow({
                             </Avatar>
                             <div>
                               <h4 className="font-medium">{professional.name}</h4>
-                              <p className="text-sm text-muted-foreground">
-                                {professional.default_start_time} às {professional.default_end_time}
-                              </p>
+                              <p className="text-sm text-muted-foreground"> Normalmente das:</p>
+                              <p className="text-sm text-muted-foreground"> {professional.default_start_time} às {professional.default_end_time}</p>
                               <Badge variant="outline" className="mt-1">
                                 {professional.serves_all_services ? "Todos serviços" : "Serviços específicos"}
                               </Badge>
@@ -344,34 +344,46 @@ export default function SmartBookingFlow({
               <div>
                 <h3 className="text-lg font-semibold mb-4">3. Selecione a Data</h3>
                 <div className="flex justify-center">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(date) => {
-                      setSelectedDate(date);
-                      setSelectedTime('');
-                    }}
-                    disabled={(date) => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const compareDate = new Date(date);
-                      compareDate.setHours(0, 0, 0, 0);
-                      return compareDate < today || 
-                             date > addMonths(new Date(), 6) ||
-                             !hasAvailability(date);
-                    }}
-                    locale={ptBR}
-                    className="rounded-md border pointer-events-auto"
-                    modifiers={{
-                      available: hasAvailability
-                    }}
-                    modifiersStyles={{
-                      available: { 
-                        backgroundColor: 'hsl(var(--secondary))', 
-                        color: 'hsl(var(--secondary-foreground))' 
-                      }
-                    }}
-                  />
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => {
+                        setSelectedDate(date);
+                        setSelectedTime('');
+                      }}
+                      disabled={(date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+
+                        const compareDate = new Date(date);
+                        compareDate.setHours(0, 0, 0, 0);
+
+                        if (compareDate < today) return true;
+                        if (compareDate > addMonths(new Date(), 6)) return true;
+                        
+                        const isAvailable = availableDates.some(d => {
+                            const availableDates = new Date(d);
+                            availableDates.setHours(0, 0, 0, 0);
+                            return availableDates.getTime() === compareDate.getTime();
+                          }
+                        );
+                        return !isAvailable;
+                      }}
+                      
+                      locale={ptBR}
+                      className="rounded-md border pointer-events-auto"
+                      modifiers={{
+                       
+                        available: availableDates,
+                      }}
+                      modifiersStyles={{
+                        available: { 
+                          backgroundColor: 'green', 
+                          color: 'white' 
+                        }
+                      }}
+                    />
+                  
                 </div>
                 
                 <div className="flex justify-between mt-4">
