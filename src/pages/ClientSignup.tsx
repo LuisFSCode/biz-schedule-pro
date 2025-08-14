@@ -50,13 +50,8 @@ const ClientSignup = () => {
           description: "Conta criada com sucesso!"
         });
 
-        // Check for pending booking
-        const pendingBooking = localStorage.getItem('pendingBooking');
-        if (pendingBooking) {
-          navigate(`/${slug}/agendar`);
-        } else {
-          navigate(`/${slug}/meus-agendamentos`);
-        }
+        // Redirect to login instead of direct access
+        navigate(`/${slug}/entrar`);
       }
     } catch (error: any) {
       toast({

@@ -10,7 +10,7 @@ import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const ClientAppointments = () => {
-  const { slug } = useParams();
+  const { slug, userId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -30,7 +30,12 @@ const ClientAppointments = () => {
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      navigate(`/${slug}/login-cliente`);
+      navigate(`/${slug}/entrar`);
+      return;
+    }
+    // Verify that the logged user matches the URL user
+    if (session.user.id !== userId) {
+      navigate(`/${slug}/entrar`);
       return;
     }
     setUser(session.user);

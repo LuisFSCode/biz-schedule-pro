@@ -49,7 +49,7 @@ const App = () => (
           {/* Rotas antigas mantidas para compatibilidade */}
           <Route path="/:slug/login-cliente" element={<ClientLogin />} />
           <Route path="/:slug/cadastro-cliente" element={<ClientSignup />} />
-          <Route path="/:slug/meus-agendamentos" element={<ClientAppointments />} />
+          <Route path="/:slug/:userId/meus-agendamentos" element={<ClientAppointments />} />
           
           {/* Landing page pública do estabelecimento */}
           <Route path="/:slug" element={<PublicLanding />} />

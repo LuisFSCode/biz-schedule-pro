@@ -40,13 +40,16 @@ const ClientLogin = () => {
         description: "Login realizado com sucesso!"
       });
 
+      // Get user ID for dynamic route
+      const userId = data.user?.id;
+      
       // Check for pending booking
       const pendingBooking = localStorage.getItem('pendingBooking');
       if (pendingBooking) {
         localStorage.removeItem('pendingBooking');
         navigate(`/${slug}/agendar`);
       } else {
-        navigate(`/${slug}/meus-agendamentos`);
+        navigate(`/${slug}/${userId}/meus-agendamentos`);
       }
     } catch (error: any) {
       toast({
