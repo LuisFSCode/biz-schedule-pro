@@ -110,7 +110,7 @@ const Cadastro = () => {
           description: "Sua página foi criada com sucesso!"
         });
         
-        navigate('/dashboard');
+        navigate(`/${formData.slug}/admin/login`);
       }
     } catch (error: any) {
       toast({

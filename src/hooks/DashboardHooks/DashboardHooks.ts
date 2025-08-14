@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export function DashboardState(){
   const [loading, setLoading] = useState(true);
-//   const [establishment, setEstablishment] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("appointments");
@@ -15,6 +14,7 @@ export function DashboardState(){
   const { toast } = useToast();
 
   const navigate = useNavigate();
+  const { slug } = useParams();
 
   useEffect(() => {
     checkAuth();
@@ -23,7 +23,26 @@ export function DashboardState(){
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      navigate('/login');
+      navigate(`/${slug}/admin/login`);
+      return;
+    }
+    
+    // Verificar se o usuário é dono do estabelecimento
+    const { data: establishmentData } = await supabase
+      .from('establishments')
+      .select('id, slug')
+      .eq('slug', slug)
+      .eq('id', session.user.id)
+      .single();
+
+    if (!establishmentData) {
+      await supabase.auth.signOut();
+      toast({
+        title: "Estabelecimento não encontrado",
+        description: "Você não tem permissão para acessar este painel.",
+        variant: "destructive"
+      });
+      navigate('/');
       return;
     }
     
@@ -32,7 +51,7 @@ export function DashboardState(){
   
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/');
+    navigate(`/${slug}`);
   };
 
   const loadEstablishmentData = async () => {
@@ -44,6 +63,7 @@ export function DashboardState(){
       const { data: establishmentData, error: establishmentError } = await supabase
         .from('establishments')
         .select('*')
+        .eq('slug', slug)
         .eq('id', session.user.id)
         .single();
 

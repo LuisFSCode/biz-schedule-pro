@@ -38,6 +38,22 @@ const ClientAppointments = () => {
 
   const loadAppointments = async () => {
     try {
+      // Primeiro, buscar o establishment_id baseado no slug
+      const { data: establishment } = await supabase
+        .from('establishments')
+        .select('id')
+        .eq('slug', slug)
+        .single();
+
+      if (!establishment) {
+        toast({
+          title: "Erro",
+          description: "Estabelecimento não encontrado",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { data, error } = await supabase
         .from('appointments')
         .select(`
@@ -47,6 +63,7 @@ const ClientAppointments = () => {
           )
         `)
         .eq('customer_id', user.id)
+        .eq('establishment_id', establishment.id)
         .order('appointment_date', { ascending: true });
 
       if (error) throw error;
